@@ -1,0 +1,24 @@
+{
+   "name": "@react-vite-trpc/ui",
+   "version": "1.0.0",
+   "main": "src/index.tsx",
+   "types": "src/index.tsx",
+   "license": "MIT",
+   "dependencies": {
+      "@trpc/client": "^11.4.4",
+      "@trpc/react-query": "^11.4.4",
+      "@trpc/server": "^11.4.4",
+      "@trpc/tanstack-react-query": "^11.4.4",
+      "styled-components": "^5.3.11"
+   },
+   "devDependencies": {
+      "@react-vite-trpc/eslint-config": "workspace:*",
+      "@react-vite-trpc/tsconfig": "workspace:*",
+      "@types/react": "^18.0.17",
+      "@types/react-dom": "^18.0.6",
+      "@types/styled-components": "^5.1.26",
+      "eslint": "^7.32.0",
+      "react": "^18.2.0",
+      "typescript": "^4.9.5"
+   }
+}
