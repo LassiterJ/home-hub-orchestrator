@@ -1,5 +1,5 @@
 {
-   "name": "@react-vite-trpc/web",
+   "name": "@home-hub-orchestrator/web",
    "private": true,
    "version": "1.0.0",
    "type": "module",
@@ -23,7 +23,7 @@
       "cypress:install": "cypress install"
    },
    "dependencies": {
-      "@react-vite-trpc/ui": "workspace:*",
+      "@home-hub-orchestrator/ui": "workspace:*",
       "@tanstack/react-query": "^5.85.5",
       "@tanstack/react-router-devtools": "^1.131.27",
       "@trpc/client": "^11.4.4",
@@ -35,8 +35,8 @@
       "styled-components": "^5.3.11"
    },
    "devDependencies": {
-      "@react-vite-trpc/eslint-config": "workspace:*",
-      "@react-vite-trpc/tsconfig": "workspace:*",
+      "@home-hub-orchestrator/eslint-config": "workspace:*",
+      "@home-hub-orchestrator/tsconfig": "workspace:*",
       "@tanstack/react-router": "^1.131.27",
       "@tanstack/router-devtools": "^1.131.27",
       "@tanstack/router-plugin": "^1.131.27",

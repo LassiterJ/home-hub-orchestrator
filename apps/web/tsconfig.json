@@ -1,5 +1,5 @@
 {
-   "extends": "@react-vite-trpc/tsconfig/react.json",
+   "extends": "@home-hub-orchestrator/tsconfig/react.json",
    "compilerOptions": {
       "moduleResolution": "bundler",
       "baseUrl": "src",
@@ -12,7 +12,7 @@
          "path": "../server"
       },
       {
-         "path": "../../@react-vite-trpc/ui/tsconfig.json"
+         "path": "../../@home-hub-orchestrator/ui/tsconfig.json"
       }
    ]
 }

@@ -19,7 +19,7 @@
 
       "^env$",
 
-      "^@react-vite-trpc(.*)",
+      "^@home-hub-orchestrator(.*)",
 
       "^trpc(.*)",
       "^trpc$",

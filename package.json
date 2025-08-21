@@ -1,5 +1,5 @@
 {
-   "name": "react-vite-trpc",
+   "name": "home-hub-orchestrator",
    "version": "1.0.0",
    "private": true,
    "packageManager": "pnpm@8.6.5",
@@ -7,10 +7,10 @@
       "node": "24.x"
    },
    "scripts": {
-      "start": "pnpm -F @react-vite-trpc/server start",
-      "pm2:start": "pnpm -F @react-vite-trpc/server pm2:start",
-      "pm2:delete": "pnpm -F @react-vite-trpc/server pm2:delete",
-      "pm2:logs": "pnpm -F @react-vite-trpc/server pm2:logs",
+      "start": "pnpm -F @home-hub-orchestrator/server start",
+      "pm2:start": "pnpm -F @home-hub-orchestrator/server pm2:start",
+      "pm2:delete": "pnpm -F @home-hub-orchestrator/server pm2:delete",
+      "pm2:logs": "pnpm -F @home-hub-orchestrator/server pm2:logs",
       "dev": "turbo run dev",
       "lint": "turbo run lint",
       "lint:fix": "turbo run lint:fix",
@@ -24,11 +24,11 @@
       "test:e2e:run": "turbo run test:e2e:run",
       "test:coverage": "turbo run test:coverage",
       "test:coverage:preview": "turbo run test:coverage:preview",
-      "cypress:install": "pnpm -F @react-vite-trpc/web cypress:install",
+      "cypress:install": "pnpm -F @home-hub-orchestrator/web cypress:install",
       "postinstall": "pnpm build:lib"
    },
    "devDependencies": {
-      "@react-vite-trpc/eslint-config": "workspace:*",
+      "@home-hub-orchestrator/eslint-config": "workspace:*",
       "@swc/core": "^1.3.71",
       "@trivago/prettier-plugin-sort-imports": "^4.2.0",
       "@types/glob": "^8.1.0",
@@ -41,7 +41,7 @@
       "vitest": "^0.34.1"
    },
    "dependencies": {
-      "@react-vite-trpc/web": "workspace:^",
+      "@home-hub-orchestrator/web": "workspace:^",
       "@tanstack/react-query": "^5.85.5",
       "sass": "^1.90.0"
    }

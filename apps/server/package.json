@@ -1,11 +1,11 @@
 {
-   "name": "@react-vite-trpc/server",
+   "name": "@home-hub-orchestrator/server",
    "version": "1.0.0",
    "private": true,
    "type": "module",
    "scripts": {
       "start": "cross-env NODE_ENV=production node dist/src/server.js",
-      "pm2:start": "pnpm pm2:delete && pnpm build && cross-env NODE_ENV=test pm2 start dist/src/server.js --name @react-vite-trpc/server",
+      "pm2:start": "pnpm pm2:delete && pnpm build && cross-env NODE_ENV=test pm2 start dist/src/server.js --name @home-hub-orchestrator/server",
       "pm2:delete": "pm2 delete all &",
       "pm2:logs": "pm2 logs",
       "dev": "nodemon --exec tsx src/server.ts --inspect",
@@ -35,8 +35,8 @@
       "zod": "^4.0.17"
    },
    "devDependencies": {
-      "@react-vite-trpc/config": "workspace:*",
-      "@react-vite-trpc/tsconfig": "workspace:*",
+      "@home-hub-orchestrator/config": "workspace:*",
+      "@home-hub-orchestrator/tsconfig": "workspace:*",
       "@swc/core": "^1.3.62",
       "@trivago/prettier-plugin-sort-imports": "^4.2.0",
       "@types/cookie-parser": "^1.4.3",

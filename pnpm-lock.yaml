@@ -8,7 +8,7 @@ importers:
 
   .:
     dependencies:
-      '@react-vite-trpc/web':
+      '@home-hub-orchestrator/web':
         specifier: workspace:^
         version: link:apps/web
       '@tanstack/react-query':
@@ -18,9 +18,9 @@ importers:
         specifier: ^1.90.0
         version: 1.90.0
     devDependencies:
-      '@react-vite-trpc/eslint-config':
+      '@home-hub-orchestrator/eslint-config':
         specifier: workspace:*
-        version: link:@react-vite-trpc/eslint-config
+        version: link:@home-hub-orchestrator/eslint-config
       '@swc/core':
         specifier: ^1.3.71
         version: 1.3.71
@@ -52,7 +52,7 @@ importers:
         specifier: ^0.34.1
         version: 0.34.1(sass@1.90.0)
 
-  '@react-vite-trpc/config':
+  '@home-hub-orchestrator/config':
     dependencies:
       '@trpc/client':
         specifier: ^11.4.4
@@ -67,10 +67,10 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1
     devDependencies:
-      '@react-vite-trpc/eslint-config':
+      '@home-hub-orchestrator/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@react-vite-trpc/tsconfig':
+      '@home-hub-orchestrator/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/node':
@@ -83,7 +83,7 @@ importers:
         specifier: ^5.1.6
         version: 5.9.2
 
-  '@react-vite-trpc/eslint-config':
+  '@home-hub-orchestrator/eslint-config':
     dependencies:
       '@trpc/client':
         specifier: ^11.4.4
@@ -122,7 +122,7 @@ importers:
         specifier: ^5.1.6
         version: 5.9.2
 
-  '@react-vite-trpc/tsconfig':
+  '@home-hub-orchestrator/tsconfig':
     dependencies:
       '@trpc/client':
         specifier: ^11.4.4
@@ -134,7 +134,7 @@ importers:
         specifier: ^11.4.4
         version: 11.4.4(@tanstack/react-query@5.85.5)(@trpc/client@11.4.4)(@trpc/server@11.4.4)(react-dom@18.2.0)(react@18.2.0)(typescript@5.9.2)
 
-  '@react-vite-trpc/ui':
+  '@home-hub-orchestrator/ui':
     dependencies:
       '@trpc/client':
         specifier: ^11.4.4
@@ -152,10 +152,10 @@ importers:
         specifier: ^5.3.11
         version: 5.3.11(@babel/core@7.28.3)(react-dom@18.2.0)(react-is@19.1.1)(react@18.2.0)
     devDependencies:
-      '@react-vite-trpc/eslint-config':
+      '@home-hub-orchestrator/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@react-vite-trpc/tsconfig':
+      '@home-hub-orchestrator/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/react':
@@ -207,12 +207,12 @@ importers:
         specifier: ^4.0.17
         version: 4.0.17
     devDependencies:
-      '@react-vite-trpc/config':
+      '@home-hub-orchestrator/config':
         specifier: workspace:*
-        version: link:../../@react-vite-trpc/config
-      '@react-vite-trpc/tsconfig':
+        version: link:../../@home-hub-orchestrator/config
+      '@home-hub-orchestrator/tsconfig':
         specifier: workspace:*
-        version: link:../../@react-vite-trpc/tsconfig
+        version: link:../../@home-hub-orchestrator/tsconfig
       '@swc/core':
         specifier: ^1.3.62
         version: 1.3.71
@@ -261,9 +261,9 @@ importers:
 
   apps/web:
     dependencies:
-      '@react-vite-trpc/ui':
+      '@home-hub-orchestrator/ui':
         specifier: workspace:*
-        version: link:../../@react-vite-trpc/ui
+        version: link:../../@home-hub-orchestrator/ui
       '@tanstack/react-query':
         specifier: ^5.85.5
         version: 5.85.5(react@18.2.0)
@@ -292,12 +292,12 @@ importers:
         specifier: ^5.3.11
         version: 5.3.11(@babel/core@7.28.3)(react-dom@18.2.0)(react-is@19.1.1)(react@18.2.0)
     devDependencies:
-      '@react-vite-trpc/eslint-config':
+      '@home-hub-orchestrator/eslint-config':
         specifier: workspace:*
-        version: link:../../@react-vite-trpc/eslint-config
-      '@react-vite-trpc/tsconfig':
+        version: link:../../@home-hub-orchestrator/eslint-config
+      '@home-hub-orchestrator/tsconfig':
         specifier: workspace:*
-        version: link:../../@react-vite-trpc/tsconfig
+        version: link:../../@home-hub-orchestrator/tsconfig
       '@tanstack/react-router':
         specifier: ^1.131.27
         version: 1.131.27(react-dom@18.2.0)(react@18.2.0)

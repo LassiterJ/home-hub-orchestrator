@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { Label } from '@react-vite-trpc/ui'
+import { Label } from '@home-hub-orchestrator/ui'
 
 import * as Styled from './styled'
 

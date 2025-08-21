@@ -1,5 +1,5 @@
 {
-   "extends": "@react-vite-trpc/tsconfig/node.json",
+   "extends": "@home-hub-orchestrator/tsconfig/node.json",
    "compilerOptions": {
       "baseUrl": "src",
       "outDir": "dist"
@@ -11,7 +11,7 @@
    ],
    "references": [
       {
-         "path": "../../@react-vite-trpc/config/tsconfig.json"
+         "path": "../../@home-hub-orchestrator/config/tsconfig.json"
       }
    ]
 }

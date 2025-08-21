@@ -5,6 +5,6 @@
    },
    "watch": [
       "./src",
-      "../../@react-vite-trpc/config/dist/index.js"
+      "../../@home-hub-orchestrator/config/dist/index.js"
    ]
 }

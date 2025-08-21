@@ -41,7 +41,7 @@ describe('Aliases', () => {
       })
 
       it('should add aliases for internal packages', () => {
-         const references = [{ path: '../@react-vite-trpc/config' }]
+         const references = [{ path: '../@home-hub-orchestrator/config' }]
 
          const tsConfig = {
             extends: '',

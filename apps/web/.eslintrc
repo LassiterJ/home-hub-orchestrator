@@ -1,1 +1,1 @@
-{ "extends": ["@react-vite-trpc/eslint-config/react"] }
+{ "extends": ["@home-hub-orchestrator/eslint-config/react"] }

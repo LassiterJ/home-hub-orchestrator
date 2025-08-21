@@ -1,5 +1,5 @@
 {
-   "name": "@react-vite-trpc/ui",
+   "name": "@home-hub-orchestrator/ui",
    "version": "1.0.0",
    "main": "src/index.tsx",
    "types": "src/index.tsx",
@@ -12,8 +12,8 @@
       "styled-components": "^5.3.11"
    },
    "devDependencies": {
-      "@react-vite-trpc/eslint-config": "workspace:*",
-      "@react-vite-trpc/tsconfig": "workspace:*",
+      "@home-hub-orchestrator/eslint-config": "workspace:*",
+      "@home-hub-orchestrator/tsconfig": "workspace:*",
       "@types/react": "^18.0.17",
       "@types/react-dom": "^18.0.6",
       "@types/styled-components": "^5.1.26",

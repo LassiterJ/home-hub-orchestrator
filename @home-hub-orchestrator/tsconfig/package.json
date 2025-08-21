@@ -1,5 +1,5 @@
 {
-   "name": "@react-vite-trpc/tsconfig",
+   "name": "@home-hub-orchestrator/tsconfig",
    "version": "1.0.0",
    "private": true,
    "sideEffects": false,

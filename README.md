@@ -36,13 +36,13 @@ For local execution, use `pnpm install` and `pnpm dev`.
 
 #### Customization & tips:
 
--  To tailor the template to your needs, replace of `@react-vite-trpc` with `@your-idea` (you can use `CMD + SHIFT + H` in VS Code to do this globally)
+-  To tailor the template to your needs, replace of `@home-hub-orchestrator` with `@your-idea` (you can use `CMD + SHIFT + H` in VS Code to do this globally)
 
--  When deploying, make sure to update the `host` property in the `HttpService` class (`@react-vite-trpc\config\src\services\httpService.ts`)
+-  When deploying, make sure to update the `host` property in the `HttpService` class (`@home-hub-orchestrator\config\src\services\httpService.ts`)
 
 -  Adjust the preferred order of imports in `.prettierrc` files using the `importOrder` property
 
--  When adding a new local package (i.e. `/@react-vite-trpc/new-package`), remember to update the `watch` array in `nodemon.json` and provide appropriate TypeScript references in `tsconfig.json` files for an enhanced DX
+-  When adding a new local package (i.e. `/@home-hub-orchestrator/new-package`), remember to update the `watch` array in `nodemon.json` and provide appropriate TypeScript references in `tsconfig.json` files for an enhanced DX
 
 -  The test coverage `.lcov` files (generated with `pnpm test:coverage`), can be easily leveraged with VS Code extension [Coverage Gutters](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters)
 
