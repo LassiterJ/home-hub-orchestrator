@@ -64,13 +64,7 @@ export async function getDetectionsFromImage(rawBytes: Uint8Array) {
         throw e;
     }
 }
-// Tiny helper to read FormData from the raw request via Express adapter.
-async function getFormDataFromReq(req: Request) {
-   // In @trpc/server/adapters/express the handler gives you the Web Request via the adapter.
-   // Easiest is to use the native Body#formData().
-   console.log("req: ", req);
-   return await (req as any).formData?.() // in Node 20+, Request has formData()
-}
+
 
 // tRPC procedure: input is application/octet-stream (binary)
 // Client must send raw bytes as the mutation input.
