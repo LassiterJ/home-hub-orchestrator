@@ -8,6 +8,11 @@
       "react.json",
       "node.json"
    ],
+  "exports": {
+    "./base.json": "./base.json",
+    "./react.json": "./react.json",
+    "./node.json": "./node.json"
+  },
    "dependencies": {
       "@trpc/client": "^11.4.4",
       "@trpc/server": "^11.4.4",

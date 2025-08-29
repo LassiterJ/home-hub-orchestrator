@@ -9,7 +9,8 @@
       "@trpc/react-query": "^11.4.4",
       "@trpc/server": "^11.4.4",
       "@trpc/tanstack-react-query": "^11.4.4",
-      "styled-components": "^5.3.11"
+      "clsx": "^2.1.1",
+      "tailwind-merge": "^3.3.1"
    },
    "devDependencies": {
       "@home-hub-orchestrator/eslint-config": "workspace:*",

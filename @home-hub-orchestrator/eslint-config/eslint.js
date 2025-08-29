@@ -12,9 +12,9 @@ module.exports = {
       'prefer-template': ['error'],
       '@typescript-eslint/consistent-type-imports': ['error', { fixStyle: 'inline-type-imports' }],
       'no-empty': ['error', { allowEmptyCatch: true }],
-      'unused-imports/no-unused-imports': 'warn',
+      'unused-imports/no-unused-imports': 'off',
       '@typescript-eslint/no-unused-vars': [
-         'error',
+         'off',
          {
             argsIgnorePattern: '^_',
             varsIgnorePattern: '^_',

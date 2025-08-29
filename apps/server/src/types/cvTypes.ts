@@ -1,4 +1,4 @@
-// Raw shape returned by getDetections-api (Alex-Lekov template)
+// Raw shape returned by computerVision-api (Alex-Lekov template)
 export type CVApiJsonDetectionRaw = {
     name: string;
     confidence: number;

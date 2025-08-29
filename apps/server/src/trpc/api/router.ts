@@ -1,11 +1,16 @@
 import { router } from '../trpc'
-import { getRole, getDetections } from './resolvers'
+import { userRouter, workflowsRouter, computerVisionRouter  } from './resolvers'
 
 import {Application} from "express";
 import * as trpcExpress from '@trpc/server/adapters/express';
 import {createExpressMiddleware} from "@trpc/server/adapters/express";
 
-const appRouter = router({ getRole, getDetections })
+const appRouter = router({
+   user: userRouter,
+   cv: computerVisionRouter,
+   workflows: workflowsRouter,
+})
+
 export type AppRouter = typeof appRouter
 
 const createContext = ({

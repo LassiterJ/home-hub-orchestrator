@@ -43,6 +43,8 @@
    "dependencies": {
       "@home-hub-orchestrator/web": "workspace:^",
       "@tanstack/react-query": "^5.85.5",
-      "sass": "^1.90.0"
+      "@xyflow/react": "^12.8.4",
+      "sass": "^1.90.0",
+      "web": "^0.0.2"
    }
 }

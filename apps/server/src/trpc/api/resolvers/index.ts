@@ -1,2 +1,4 @@
-export { getRole } from './getRole/getRole';
-export {getDetections} from './getDetections/getDetections';
+export {computerVisionRouter} from './computerVision/computerVision';
+export {userRouter} from "./user";
+export {workflowsRouter} from "./workflows";
+

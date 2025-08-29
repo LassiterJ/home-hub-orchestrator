@@ -41,7 +41,7 @@ function CVTest() {
    const [loading, setLoading] = React.useState(false)
    const [err, setErr] = React.useState('')
    const trpc = useTRPC();
-   const getDetectionsOptions = trpc.getDetections.mutationOptions();
+   const getDetectionsOptions = trpc.cv.detect.mutationOptions();
    const detect = useMutation(getDetectionsOptions);
 
    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
