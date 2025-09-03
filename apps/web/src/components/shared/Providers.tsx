@@ -1,12 +1,12 @@
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import { ThemeProvider } from 'styled-components'
-import { TRPCProvider } from '../../utils/trpc';
+import { TRPCProvider } from '@/utils/trpc';
 
 import { RouterInstance } from '../core/App'
 
-import { theme } from 'styles'
-import 'styles/index.css'
+import { theme } from '@/styles'
+import '@/styles/index.css'
 import {createTRPCClient, httpBatchLink, httpLink, isNonJsonSerializable, splitLink} from "@trpc/client";
 import {AppRouter} from "../../../../server/src/trpc";
 import {useState} from "react";

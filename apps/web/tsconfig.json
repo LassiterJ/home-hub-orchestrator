@@ -2,9 +2,12 @@
    "extends": "@home-hub-orchestrator/tsconfig/react.json",
    "compilerOptions": {
       "moduleResolution": "bundler",
-      "baseUrl": "src",
+      "baseUrl": ".",
       "outDir": "dist",
-      "composite": false
+      "composite": false,
+      "paths": {
+        "@/*": ["src/*"]
+      }
    },
    "include": ["src", "cypress", "vite.config.ts", "vitest.setup.ts"],
    "references": [
@@ -14,5 +17,6 @@
       {
          "path": "../../@home-hub-orchestrator/ui/tsconfig.json"
       }
-   ]
+   ],
+
 }

@@ -4,6 +4,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { Environment } from './src/env/env'
+import * as path from 'path'
 
 // --------------------plugins--------------------
 
@@ -25,12 +26,17 @@ export default defineConfig(({ mode }) => {
       plugins: [envPlugin(env), tsconfigPaths(), tailwindcss(), tanstackRouter({
           target: 'react',
           autoCodeSplitting: true,
-      }), react({ babel: { plugins: [['babel-plugin-styled-components']] } })],
+      }), react()],
       server: {
          host: true,
          port: 3000,
          open: true,
          proxy: { '/trpc': { target: 'http://localhost:3001' } },
+      },
+      resolve: {
+         alias: {
+            "@": path.resolve(__dirname, "./src"),
+         },
       },
    }
 })
