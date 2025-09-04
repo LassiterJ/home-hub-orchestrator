@@ -1,24 +1,15 @@
-import React from 'react';
-import { Card } from '@home-hub-orchestrator/ui/src/Card/Card';
-import {
-   Database,
-   Brain,
-   Settings,
-   Upload,
-   Zap,
-   Image,
-   Video,
-   BarChart3
-} from 'lucide-react';
+import React from 'react'
+import { Card } from '@home-hub-orchestrator/ui/src/Card/Card'
+import { BarChart3, Brain, Database, Image, Settings, Upload, Video, Zap } from 'lucide-react'
 
 const nodeCategories = [
    {
       title: 'Input',
       nodes: [
-         { type: 'input', label: 'Image Input', icon: Image, description: 'Load images from various sources' },
-         { type: 'input', label: 'Video Input', icon: Video, description: 'Load video streams or files' },
+         { type: 'input', label: 'Image BaseInput', icon: Image, description: 'Load images from various sources' },
+         { type: 'input', label: 'Video BaseInput', icon: Video, description: 'Load video streams or files' },
          { type: 'input', label: 'Dataset', icon: Database, description: 'Load annotated datasets' },
-      ]
+      ],
    },
    {
       title: 'Models',
@@ -26,7 +17,7 @@ const nodeCategories = [
          { type: 'model', label: 'Object Detection', icon: Brain, description: 'Detect objects in images' },
          { type: 'model', label: 'Classification', icon: Brain, description: 'Classify images or objects' },
          { type: 'model', label: 'Segmentation', icon: Brain, description: 'Segment objects or regions' },
-      ]
+      ],
    },
    {
       title: 'Processing',
@@ -34,7 +25,7 @@ const nodeCategories = [
          { type: 'processing', label: 'Filter', icon: Settings, description: 'Filter detections by criteria' },
          { type: 'processing', label: 'Transform', icon: Zap, description: 'Transform image coordinates' },
          { type: 'processing', label: 'Augment', icon: Settings, description: 'Apply data augmentations' },
-      ]
+      ],
    },
    {
       title: 'Output',
@@ -42,18 +33,19 @@ const nodeCategories = [
          { type: 'output', label: 'Visualize', icon: BarChart3, description: 'Visualize results and metrics' },
          { type: 'output', label: 'Export', icon: Upload, description: 'Export results to various formats' },
          { type: 'output', label: 'Webhook', icon: Zap, description: 'Send results via webhook' },
-      ]
-   }
-];
+      ],
+   },
+]
 
 const NodeSidebar = () => {
    const onDragStart = (event: React.DragEvent, nodeType: string) => {
-      event.dataTransfer.setData('application/reactflow', nodeType);
-      event.dataTransfer.effectAllowed = 'move';
-   };
+      event.dataTransfer.setData('application/reactflow', nodeType)
+      event.dataTransfer.effectAllowed = 'move'
+   }
 
    return (
-      <div className="w-80 bg-sidebar-bg text-sidebar-fg p-4 border-r border-border overflow-y-auto shadow-[var(--shadow-sidebar)]">
+      <div
+         className="w-80 bg-sidebar-bg text-sidebar-fg p-4 border-r border-border overflow-y-auto shadow-[var(--shadow-sidebar)]">
          <div className="mb-6">
             <h1 className="text-xl font-bold mb-2">Roboflow Workflows</h1>
             <p className="text-sm text-sidebar-muted">Drag blocks to build your computer vision workflow</p>
@@ -71,7 +63,7 @@ const NodeSidebar = () => {
                            key={`${node.type}-${index}`}
                            className="p-3 cursor-grab active:cursor-grabbing bg-sidebar-muted border-sidebar-muted hover:bg-sidebar-muted/80 transition-colors"
                            draggable
-                           onDragStart={(event:React.DragEvent) => onDragStart(event, node.type)}
+                           onDragStart={(event: React.DragEvent) => onDragStart(event, node.type)}
                         >
                            <div className="flex items-start gap-3">
                               <div className={`p-2 rounded-md ${
@@ -94,7 +86,7 @@ const NodeSidebar = () => {
             ))}
          </div>
       </div>
-   );
-};
+   )
+}
 
-export default NodeSidebar;
+export default NodeSidebar

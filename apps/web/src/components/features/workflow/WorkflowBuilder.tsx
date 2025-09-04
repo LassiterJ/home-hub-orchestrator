@@ -1,60 +1,60 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react'
 import {
-   ReactFlow,
    addEdge,
-   MiniMap,
-   Controls,
    Background,
-   useNodesState,
-   useEdgesState,
-   Connection,
-   Edge,
-   Node,
    BackgroundVariant,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+   Connection,
+   Controls,
+   MiniMap,
+   Node,
+   ReactFlow,
+   useEdgesState,
+   useNodesState,
+} from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
 
-import NodeSidebar from './NodeSidebar';
-import { InputNode, ModelNode, ProcessingNode, OutputNode } from './nodes';
-import { sampleNodes, sampleEdges } from './sampleWorkflow';
-import { NodeData } from '../../../types';
+import NodeSidebar from './NodeSidebar'
+import { InputNode, ModelNode, OutputNode, ProcessingNode } from './nodes'
+import { sampleEdges, sampleNodes } from './sampleWorkflow'
+import { NodeData } from '@/types'
 
 const nodeTypes = {
    input: InputNode,
    model: ModelNode,
    processing: ProcessingNode,
    output: OutputNode,
-};
+}
 
 export const WorkflowBuilder = () => {
-   const [nodes, setNodes, onNodesChange] = useNodesState(sampleNodes);
-   const [edges, setEdges, onEdgesChange] = useEdgesState(sampleEdges);
-   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
+   const [nodes, setNodes, onNodesChange] = useNodesState(sampleNodes)
+   const [edges, setEdges, onEdgesChange] = useEdgesState(sampleEdges)
+   const [reactFlowInstance, setReactFlowInstance] = useState<any>(null)
 
    const onConnect = useCallback(
       (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-      [setEdges]
-   );
+      [setEdges],
+   )
 
    const onDragOver = useCallback((event: React.DragEvent) => {
-      event.preventDefault();
-      event.dataTransfer.dropEffect = 'move';
-   }, []);
+      event.preventDefault()
+      event.dataTransfer.dropEffect = 'move'
+   }, [])
 
    const onDrop = useCallback(
       (event: React.DragEvent) => {
-         event.preventDefault();
+         event.preventDefault()
 
-         if (!reactFlowInstance) return;
+         if (!reactFlowInstance) return
 
-         const type = event.dataTransfer.getData('application/reactflow');
-         if (!type) return;
+         const type = event.dataTransfer.getData('application/reactflow')
+         if (!type) return
 
          const position = reactFlowInstance.screenToFlowPosition({
             x: event.clientX,
             y: event.clientY,
-         });
-
+         })
+// TODO: Use GUID for Id `${type}-${subType}-${Date.now()}-${GenRandomGUID()}`
+         // `node-input-12931238917-123987123981723
          const newNode: Node<NodeData> = {
             id: `${type}-${Date.now()}`,
             type,
@@ -63,17 +63,17 @@ export const WorkflowBuilder = () => {
                label: `${type.charAt(0).toUpperCase() + type.slice(1)} Node`,
                description: `A ${type} node for your workflow`,
                kind: type,
-               runtime: "default", // or whichever runtime string makes sense in your system
-               effect: "none",     // replace with your default effect
+               runtime: 'default', // or whichever runtime string makes sense in your system
+               effect: 'none',     // replace with your default effect
                inputs: [],
                outputs: [],
             },
-         };
+         }
 
-         setNodes((nds) => nds.concat(newNode));
+         setNodes((nds) => nds.concat(newNode))
       },
-      [reactFlowInstance, setNodes]
-   );
+      [reactFlowInstance, setNodes],
+   )
 
    return (
       <div className="h-screen flex bg-canvas">
@@ -97,11 +97,16 @@ export const WorkflowBuilder = () => {
                   className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
                   nodeColor={(node) => {
                      switch (node.type) {
-                        case 'input': return 'hsl(var(--node-input))';
-                        case 'model': return 'hsl(var(--node-model))';
-                        case 'processing': return 'hsl(var(--node-processing))';
-                        case 'output': return 'hsl(var(--node-output))';
-                        default: return 'hsl(var(--muted))';
+                        case 'input':
+                           return 'hsl(var(--node-input))'
+                        case 'model':
+                           return 'hsl(var(--node-model))'
+                        case 'processing':
+                           return 'hsl(var(--node-processing))'
+                        case 'output':
+                           return 'hsl(var(--node-output))'
+                        default:
+                           return 'hsl(var(--muted))'
                      }
                   }}
                />
@@ -109,5 +114,5 @@ export const WorkflowBuilder = () => {
             </ReactFlow>
          </div>
       </div>
-   );
-};
+   )
+}
