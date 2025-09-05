@@ -1,5 +1,5 @@
-import { Node, Edge } from '@xyflow/react';
-import { NodeData } from '../../../types';
+import { Edge, Node } from '@xyflow/react'
+import { NodeData } from '../../../types'
 
 export const sampleNodes: Node<NodeData>[] = [
    {
@@ -9,11 +9,11 @@ export const sampleNodes: Node<NodeData>[] = [
       data: {
          label: 'Image Dataset',
          description: 'Your source images for processing',
-         kind: "example-kind",
-         runtime: "example-runtime",
-         effect: "exampleEffect",
-         inputs: ["example-input"],
-         outputs: ["example-outputs"],
+         kind: 'example-kind',
+         runtime: 'example-runtime',
+         effect: 'exampleEffect',
+         inputs: ['example-input'],
+         outputs: ['example-outputs'],
 
       },
 
@@ -25,11 +25,11 @@ export const sampleNodes: Node<NodeData>[] = [
       data: {
          label: 'YOLOv8 Detection',
          description: 'Object detection using YOLOv8',
-         kind: "example-kind",
-         runtime: "example-runtime",
-         effect: "exampleEffect",
-         inputs: ["example-input"],
-         outputs: ["example-outputs"],
+         kind: 'example-kind',
+         runtime: 'example-runtime',
+         effect: 'exampleEffect',
+         inputs: ['example-input'],
+         outputs: ['example-outputs'],
       },
    },
    {
@@ -39,11 +39,11 @@ export const sampleNodes: Node<NodeData>[] = [
       data: {
          label: 'Confidence Filter',
          description: 'Filter detections by confidence score',
-         kind: "example-kind",
-         runtime: "example-runtime",
-         effect: "exampleEffect",
-         inputs: ["example-input"],
-         outputs: ["example-outputs"],
+         kind: 'example-kind',
+         runtime: 'example-runtime',
+         effect: 'exampleEffect',
+         inputs: ['example-input'],
+         outputs: ['example-outputs'],
       },
    },
    {
@@ -53,14 +53,32 @@ export const sampleNodes: Node<NodeData>[] = [
       data: {
          label: 'JSON Export',
          description: 'Export results as JSON format',
-         kind: "example-kind",
-         runtime: "example-runtime",
-         effect: "exampleEffect",
-         inputs: ["example-input"],
-         outputs: ["example-outputs"],
+         kind: 'example-kind',
+         runtime: 'example-runtime',
+         effect: 'exampleEffect',
+         inputs: ['example-input'],
+         outputs: ['example-outputs'],
       },
    },
-];
+   {
+      id: '1',
+      position: { x: 0, y: 0 },
+      type: 'schema',
+      data: {
+         label: 'Products',
+         description: 'For documenting schemas.',
+         schema: [
+            { title: 'id', type: 'uuid' },
+            { title: 'name', type: 'varchar' },
+            { title: 'description', type: 'varchar' },
+            { title: 'warehouse_id', type: 'uuid' },
+            { title: 'supplier_id', type: 'uuid' },
+            { title: 'price', type: 'money' },
+            { title: 'quantity', type: 'int4' },
+         ],
+      },
+   },
+]
 
 export const sampleEdges: Edge[] = [
    {
@@ -84,5 +102,5 @@ export const sampleEdges: Edge[] = [
       target: 'example-output',
       type: 'smoothstep',
    },
-];
+]
 

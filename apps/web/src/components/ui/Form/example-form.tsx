@@ -7,7 +7,6 @@ import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button/Button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
-import { TextInput } from '@/components/ui/Input/TextInput'
 
 const FormSchema = z.object({
    username: z.string().min(2, {

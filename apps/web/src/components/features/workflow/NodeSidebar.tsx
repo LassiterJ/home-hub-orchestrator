@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card } from '@home-hub-orchestrator/ui/src/Card/Card'
-import { BarChart3, Brain, Database, Image, Settings, Upload, Video, Zap } from 'lucide-react'
+import { BarChart3, Brain, Database, FileText, Image, Settings, Table, Upload, Video, Zap } from 'lucide-react'
 
 const nodeCategories = [
    {
@@ -9,6 +9,12 @@ const nodeCategories = [
          { type: 'input', label: 'Image BaseInput', icon: Image, description: 'Load images from various sources' },
          { type: 'input', label: 'Video BaseInput', icon: Video, description: 'Load video streams or files' },
          { type: 'input', label: 'Dataset', icon: Database, description: 'Load annotated datasets' },
+         {
+            type: 'form',
+            label: 'Workflow Config',
+            icon: FileText,
+            description: 'Update the configuration at your own risk',
+         },
       ],
    },
    {
@@ -33,6 +39,18 @@ const nodeCategories = [
          { type: 'output', label: 'Visualize', icon: BarChart3, description: 'Visualize results and metrics' },
          { type: 'output', label: 'Export', icon: Upload, description: 'Export results to various formats' },
          { type: 'output', label: 'Webhook', icon: Zap, description: 'Send results via webhook' },
+      ],
+   },
+   {
+      title: 'Documentation',
+      nodes: [
+         {
+            type: 'documentation',
+            label: 'DatabaseSchemaNode',
+            icon: Table,
+            description: 'A convenient node for documenting schemas',
+         },
+
       ],
    },
 ]

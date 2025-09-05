@@ -30,7 +30,7 @@ export const InputNode = memo(({ data }: NodeProps & { data: NodeData }) => {
 
          <BaseNodeFooter className="flex justify-end">
             <div className="text-xs bg-node-input/10 text-node-input px-2 py-1 rounded-full">
-               INPUT
+
             </div>
          </BaseNodeFooter>
 
@@ -38,12 +38,12 @@ export const InputNode = memo(({ data }: NodeProps & { data: NodeData }) => {
          <Handle
             type="target"
             position={Position.Left}
-            className="!w-2 !h-2 !bg-node-input !border-2 !border-white"
+            className=" !bg-node-input !border-2 !border-white"
          />
          <Handle
             type="source"
             position={Position.Right}
-            className="!w-2 !h-2 !bg-node-input !border-2 !border-white"
+            className="!bg-node-input !border-2 !border-white"
          />
       </BaseNode>
    )

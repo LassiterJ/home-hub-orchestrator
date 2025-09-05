@@ -14,15 +14,20 @@ import {
 import '@xyflow/react/dist/style.css'
 
 import NodeSidebar from './NodeSidebar'
-import { InputNode, ModelNode, OutputNode, ProcessingNode } from './nodes'
+import { FormNode, InputNode, ModelNode, OutputNode, ProcessingNode } from './nodes'
 import { sampleEdges, sampleNodes } from './sampleWorkflow'
 import { NodeData } from '@/types'
+import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
+import { BaseHandle } from '@/components/features/workflow/handles/BaseHandle'
 
 const nodeTypes = {
    input: InputNode,
    model: ModelNode,
    processing: ProcessingNode,
    output: OutputNode,
+   schema: DatabaseSchemaDemo, // TODO make more documentation types and change nodeTypes to conform,
+   form: FormNode,
+   baseHandle: BaseHandle,
 }
 
 export const WorkflowBuilder = () => {
@@ -53,7 +58,7 @@ export const WorkflowBuilder = () => {
             x: event.clientX,
             y: event.clientY,
          })
-// TODO: Use GUID for Id `${type}-${subType}-${Date.now()}-${GenRandomGUID()}`
+// TODO: Use GUID for Id (or in addition to) `${type}-${subType}-${Date.now()}-${GenRandomGUID()}`
          // `node-input-12931238917-123987123981723
          const newNode: Node<NodeData> = {
             id: `${type}-${Date.now()}`,
