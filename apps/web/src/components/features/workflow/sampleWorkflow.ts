@@ -1,5 +1,6 @@
 import { Edge, Node } from '@xyflow/react'
 import { NodeData } from '../../../types'
+import { MenuItemSpec } from '@/components/ui/ContextMenu/buildContextMenu'
 
 export const sampleNodes: Node<NodeData>[] = [
    {
@@ -101,6 +102,28 @@ export const sampleEdges: Edge[] = [
       label: 'connects with',
       target: 'example-output',
       type: 'smoothstep',
+   },
+]
+
+export const sampleContextMenu: MenuItemSpec[] = [
+   { kind: 'label', id: 'section-a', label: 'File' },
+   { kind: 'item', id: 'open', label: 'Open', shortcut: '⌘O' },
+   {
+      kind: 'checkbox', id: 'hidden', label: 'Show hidden', checked: true, onCheckedChange: () => {
+         console.log('onCheckedChange')
+      },
+   },
+   { kind: 'separator', id: 'sep-1' },
+   {
+      kind: 'sub',
+      id: 'sort-sub',
+      label: 'Sort',
+      items: [
+         { kind: 'radio', id: 'sort-name', label: 'Name', group: 'sort', value: 'name' },
+         { kind: 'radio', id: 'sort-date', label: 'Date', group: 'sort', value: 'date' },
+         { kind: 'separator', id: 'sep-2' },
+         { kind: 'item', id: 'advanced', label: 'Advanced…' },
+      ],
    },
 ]
 
