@@ -1,4 +1,4 @@
-import { Edge, Node } from '@xyflow/react'
+import { Edge, Node, Position } from '@xyflow/react'
 import { NodeData } from '../../../types'
 import { MenuItemSpec } from '@/components/ui/ContextMenu/buildContextMenu'
 
@@ -15,7 +15,8 @@ export const sampleNodes: Node<NodeData>[] = [
          effect: 'exampleEffect',
          inputs: ['example-input'],
          outputs: ['example-outputs'],
-
+         toolbarPosition: Position.Top,      // or Right/Bottom/Left
+         forceToolbarVisible: false,         // set true to show always
       },
 
    },
@@ -68,6 +69,8 @@ export const sampleNodes: Node<NodeData>[] = [
       data: {
          label: 'Products',
          description: 'For documenting schemas.',
+         toolbarPosition: Position.Top,      // or Right/Bottom/Left
+         forceToolbarVisible: false,         // set true to show always
          schema: [
             { title: 'id', type: 'uuid' },
             { title: 'name', type: 'varchar' },

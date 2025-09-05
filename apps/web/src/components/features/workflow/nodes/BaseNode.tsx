@@ -1,34 +1,146 @@
 import { NodeStatusIndicator, NodeStatusIndicatorProps } from '@/components/features/workflow/NodeStatusIndicator'
 import { cn } from '@/utils/utils'
 import { forwardRef, type HTMLAttributes } from 'react'
-
+import { NodeToolbar, type Position } from '@xyflow/react'
+import {
+   Menubar,
+   MenubarCheckboxItem,
+   MenubarContent,
+   MenubarItem,
+   MenubarMenu,
+   MenubarRadioGroup,
+   MenubarRadioItem,
+   MenubarSeparator,
+   MenubarShortcut,
+   MenubarSub,
+   MenubarSubContent,
+   MenubarSubTrigger,
+   MenubarTrigger,
+} from '@/components/ui/Menubar'
 
 export const BaseNode = forwardRef<
    HTMLDivElement,
    HTMLAttributes<HTMLDivElement> & {
-      status?: NodeStatusIndicatorProps['status']
-      statusIndicatorVariant?: NodeStatusIndicatorProps['variant']
-   }
->(({ className, status = 'initial', statusIndicatorVariant, ...props }, ref) => (
-   <NodeStatusIndicator status={status} variant={statusIndicatorVariant}>
-      <div
-         ref={ref}
-         className={cn(
-            'relative rounded-md border bg-card text-card-foreground',
-            'hover:ring-1',
-            // React Flow displays node elements inside of a `NodeWrapper` component,
-            // which compiles down to a div with the class `react-flow__node`.
-            // When a node is selected, the class `selected` is added to the
-            // `react-flow__node` element. This allows us to style the node when it
-            // is selected, using Tailwind's `&` selector.
-            '[.react-flow\\_\\_node.selected_&]:border-muted-foreground',
-            '[.react-flow\\_\\_node.selected_&]:shadow-lg',
-            className,
-         )}
-         tabIndex={0}
-         {...props}
-      />
-   </NodeStatusIndicator>
+   status?: NodeStatusIndicatorProps['status']
+   statusIndicatorVariant?: NodeStatusIndicatorProps['variant']
+   forceToolbarVisible?: boolean,
+   toolbarPosition?: Position,
+}
+>(({ className, status = 'initial', statusIndicatorVariant, forceToolbarVisible, toolbarPosition, ...props }, ref) => (
+   <>
+      <NodeToolbar
+         isVisible={forceToolbarVisible || undefined}
+         position={toolbarPosition}
+      >
+         <Menubar>
+            <MenubarMenu>
+               <MenubarTrigger>File</MenubarTrigger>
+               <MenubarContent>
+                  <MenubarItem>
+                     New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem>
+                     New Window <MenubarShortcut>⌘N</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem disabled>New Incognito Window</MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarSub>
+                     <MenubarSubTrigger>Share</MenubarSubTrigger>
+                     <MenubarSubContent>
+                        <MenubarItem>Email link</MenubarItem>
+                        <MenubarItem>Messages</MenubarItem>
+                        <MenubarItem>Notes</MenubarItem>
+                     </MenubarSubContent>
+                  </MenubarSub>
+                  <MenubarSeparator />
+                  <MenubarItem>
+                     Print... <MenubarShortcut>⌘P</MenubarShortcut>
+                  </MenubarItem>
+               </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+               <MenubarTrigger>Edit</MenubarTrigger>
+               <MenubarContent>
+                  <MenubarItem>
+                     Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem>
+                     Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarSub>
+                     <MenubarSubTrigger>Find</MenubarSubTrigger>
+                     <MenubarSubContent>
+                        <MenubarItem>Search the web</MenubarItem>
+                        <MenubarSeparator />
+                        <MenubarItem>Find...</MenubarItem>
+                        <MenubarItem>Find Next</MenubarItem>
+                        <MenubarItem>Find Previous</MenubarItem>
+                     </MenubarSubContent>
+                  </MenubarSub>
+                  <MenubarSeparator />
+                  <MenubarItem>Cut</MenubarItem>
+                  <MenubarItem>Copy</MenubarItem>
+                  <MenubarItem>Paste</MenubarItem>
+               </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+               <MenubarTrigger>View</MenubarTrigger>
+               <MenubarContent>
+                  <MenubarCheckboxItem>Always Show Bookmarks Bar</MenubarCheckboxItem>
+                  <MenubarCheckboxItem checked>
+                     Always Show Full URLs
+                  </MenubarCheckboxItem>
+                  <MenubarSeparator />
+                  <MenubarItem inset>
+                     Reload <MenubarShortcut>⌘R</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem disabled inset>
+                     Force Reload <MenubarShortcut>⇧⌘R</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem inset>Toggle Fullscreen</MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem inset>Hide Sidebar</MenubarItem>
+               </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+               <MenubarTrigger>Profiles</MenubarTrigger>
+               <MenubarContent>
+                  <MenubarRadioGroup value="benoit">
+                     <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
+                     <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
+                     <MenubarRadioItem value="Luis">Luis</MenubarRadioItem>
+                  </MenubarRadioGroup>
+                  <MenubarSeparator />
+                  <MenubarItem inset>Edit...</MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem inset>Add Profile...</MenubarItem>
+               </MenubarContent>
+            </MenubarMenu>
+         </Menubar>
+      </NodeToolbar>
+
+      <NodeStatusIndicator status={status} variant={statusIndicatorVariant}>
+         <div
+            ref={ref}
+            className={cn(
+               'relative rounded-md border bg-card text-card-foreground',
+               'hover:ring-1',
+               // React Flow displays node elements inside of a `NodeWrapper` component,
+               // which compiles down to a div with the class `react-flow__node`.
+               // When a node is selected, the class `selected` is added to the
+               // `react-flow__node` element. This allows us to style the node when it
+               // is selected, using Tailwind's `&` selector.
+               '[.react-flow\\_\\_node.selected_&]:border-muted-foreground',
+               '[.react-flow\\_\\_node.selected_&]:shadow-lg',
+               className,
+            )}
+            tabIndex={0}
+            {...props}
+         />
+      </NodeStatusIndicator>
+   </>
 ))
 BaseNode.displayName = 'BaseNode'
 
