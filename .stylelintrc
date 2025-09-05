@@ -5,6 +5,19 @@
       "declaration-block-no-duplicate-properties": true,
       "no-descending-specificity": true,
       "value-no-vendor-prefix": null,
-      "property-no-vendor-prefix": null
+      "property-no-vendor-prefix": null,
+      "at-rule-no-unknown": [
+         true,
+         {
+            "ignoreAtRules": [
+               "theme",
+               "variant",
+               "custom-variant",
+               "layer",
+               "apply",
+               "import"
+            ]
+         }
+      ]
    }
 }
