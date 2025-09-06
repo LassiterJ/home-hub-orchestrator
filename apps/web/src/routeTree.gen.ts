@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkflowsRouteImport } from './routes/workflows'
 import { Route as UiComponentsRouteImport } from './routes/ui-components'
 import { Route as FormTestRouteImport } from './routes/form-test'
+import { Route as FormBuilderRouteImport } from './routes/form-builder'
 import { Route as CvTestRouteImport } from './routes/cv-test'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -30,6 +31,11 @@ const FormTestRoute = FormTestRouteImport.update({
   path: '/form-test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FormBuilderRoute = FormBuilderRouteImport.update({
+  id: '/form-builder',
+  path: '/form-builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CvTestRoute = CvTestRouteImport.update({
   id: '/cv-test',
   path: '/cv-test',
@@ -44,6 +50,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cv-test': typeof CvTestRoute
+  '/form-builder': typeof FormBuilderRoute
   '/form-test': typeof FormTestRoute
   '/ui-components': typeof UiComponentsRoute
   '/workflows': typeof WorkflowsRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cv-test': typeof CvTestRoute
+  '/form-builder': typeof FormBuilderRoute
   '/form-test': typeof FormTestRoute
   '/ui-components': typeof UiComponentsRoute
   '/workflows': typeof WorkflowsRoute
@@ -59,19 +67,33 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cv-test': typeof CvTestRoute
+  '/form-builder': typeof FormBuilderRoute
   '/form-test': typeof FormTestRoute
   '/ui-components': typeof UiComponentsRoute
   '/workflows': typeof WorkflowsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cv-test' | '/form-test' | '/ui-components' | '/workflows'
+  fullPaths:
+    | '/'
+    | '/cv-test'
+    | '/form-builder'
+    | '/form-test'
+    | '/ui-components'
+    | '/workflows'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cv-test' | '/form-test' | '/ui-components' | '/workflows'
+  to:
+    | '/'
+    | '/cv-test'
+    | '/form-builder'
+    | '/form-test'
+    | '/ui-components'
+    | '/workflows'
   id:
     | '__root__'
     | '/'
     | '/cv-test'
+    | '/form-builder'
     | '/form-test'
     | '/ui-components'
     | '/workflows'
@@ -80,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CvTestRoute: typeof CvTestRoute
+  FormBuilderRoute: typeof FormBuilderRoute
   FormTestRoute: typeof FormTestRoute
   UiComponentsRoute: typeof UiComponentsRoute
   WorkflowsRoute: typeof WorkflowsRoute
@@ -108,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FormTestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/form-builder': {
+      id: '/form-builder'
+      path: '/form-builder'
+      fullPath: '/form-builder'
+      preLoaderRoute: typeof FormBuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cv-test': {
       id: '/cv-test'
       path: '/cv-test'
@@ -128,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CvTestRoute: CvTestRoute,
+  FormBuilderRoute: FormBuilderRoute,
   FormTestRoute: FormTestRoute,
   UiComponentsRoute: UiComponentsRoute,
   WorkflowsRoute: WorkflowsRoute,
