@@ -15,7 +15,7 @@ import {
 import '@xyflow/react/dist/style.css'
 
 import NodeSidebar from './NodeSidebar'
-import { FormNode, InputNode, ModelNode, OutputNode, ProcessingNode } from './nodes'
+import { FormNode, ModelNode, OutputNode, ProcessingNode, TextInputNode } from './nodes'
 import { sampleContextMenu, sampleEdges, sampleNodes } from './sampleWorkflow'
 import { NodeData } from '@/types'
 import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
@@ -35,14 +35,16 @@ import {
    ContextMenuTrigger,
    MenuItemSpec,
 } from '@/components/ui/ContextMenu'
+import { FormGroupNode } from '@/components/features/workflow/nodes/FormNode'
 
 const nodeTypes: NodeTypes = {
-   input: InputNode,
+   input: TextInputNode,
    model: ModelNode,
    processing: ProcessingNode,
    output: OutputNode,
    schema: DatabaseSchemaDemo,
    form: FormNode,
+   formGroup: FormGroupNode,
 }
 type MenuPosition = {
    top?: number
@@ -125,6 +127,28 @@ export const WorkflowBuilder = () => {
       [setMenu],
    )
    const { menuContent = defaultMenuContent, ...restMenu } = menu ?? {}
+   /** Use this to trigger the context menu without wrapping the ReactFlow component:
+    *
+    *
+    * const triggerRightClick = (
+    *     element: HTMLSpanElement,
+    *     { position }: { position: XYPosition }
+    * ) => {
+    *     const event = new MouseEvent('contextmenu', {
+    *         bubbles: true,
+    *         cancelable: true,
+    *         clientX: position.x,
+    *         clientY: position.y,
+    *     });
+    *     element.dispatchEvent(event);
+    * };
+    *
+    * Usage:
+    *  triggerRightClick(ref.current, {
+    *                     position: contextMenu.position,
+    *                 });
+    * */
+
    return (
       <div className="h-screen flex bg-canvas">
          <NodeSidebar />

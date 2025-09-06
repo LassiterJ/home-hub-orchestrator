@@ -1,20 +1,30 @@
 import React from 'react'
 import { Card } from '@home-hub-orchestrator/ui/src/Card/Card'
-import { BarChart3, Brain, Database, FileText, Image, Settings, Table, Upload, Video, Zap } from 'lucide-react'
+import { BarChart3, Brain, FileText, Settings, Table, Text, Upload, Zap } from 'lucide-react'
 
 const nodeCategories = [
    {
       title: 'Input',
       nodes: [
-         { type: 'input', label: 'Image BaseInput', icon: Image, description: 'Load images from various sources' },
-         { type: 'input', label: 'Video BaseInput', icon: Video, description: 'Load video streams or files' },
-         { type: 'input', label: 'Dataset', icon: Database, description: 'Load annotated datasets' },
+         {
+            type: 'input',
+            label: 'Text Input',
+            icon: Text,
+            description: 'Add text to workflow for cases like forms and prompts',
+         },
          {
             type: 'form',
-            label: 'Workflow Config',
+            label: 'Form Node',
             icon: FileText,
             description: 'Update the configuration at your own risk',
          },
+         {
+            type: 'formGroup',
+            label: 'Form Node',
+            icon: FileText,
+            description: 'Group input nodes to output form',
+         },
+
       ],
    },
    {

@@ -1,5 +1,5 @@
-import { memo } from 'react'
-import { Handle, type NodeProps, Position } from '@xyflow/react'
+import { type ChangeEvent, memo, useCallback } from 'react'
+import { type Node, type NodeProps, Position, useReactFlow } from '@xyflow/react'
 import { Database } from 'lucide-react'
 import {
    BaseNode,
@@ -8,11 +8,21 @@ import {
    BaseNodeHeader,
    BaseNodeHeaderTitle,
 } from '@/components/features/workflow/nodes/BaseNode'
-import { type NodeData } from '@/types'
+import { Input } from '@/components/ui/Input'
+import { BaseHandle } from '@/components/features/workflow/handles/BaseHandle'
+import { NodeData } from '@/types'
 
-export const InputNode = memo(({ data }: NodeProps & { data: NodeData }) => {
+type TexInputData = NodeData & { text?: string };
+export type TextInputNode = Node<TexInputData, 'text'>
+export const TextInputNode = memo(({ id, data, ...restProps }: NodeProps<TextInputNode>) => {
+   const { updateNodeData } = useReactFlow()
+
+   const handleOnChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+      updateNodeData(id, { text: e.target.value })
+   }, [])
+
    return (
-      <BaseNode>
+      <BaseNode {...restProps}>
          <BaseNodeHeader>
             <div className="flex items-center gap-2">
                <div className="p-1.5 rounded bg-node-input/20">
@@ -26,6 +36,7 @@ export const InputNode = memo(({ data }: NodeProps & { data: NodeData }) => {
 
          <BaseNodeContent>
             <p className="text-xs text-left text-muted-foreground">{data.description}</p>
+            <Input type={'text'} className="w-full" onChange={handleOnChange} />
          </BaseNodeContent>
 
          <BaseNodeFooter className="flex justify-end">
@@ -35,12 +46,12 @@ export const InputNode = memo(({ data }: NodeProps & { data: NodeData }) => {
          </BaseNodeFooter>
 
 
-         <Handle
+         <BaseHandle
             type="target"
             position={Position.Left}
             className=" !bg-node-input !border-2 !border-white"
          />
-         <Handle
+         <BaseHandle
             type="source"
             position={Position.Right}
             className="!bg-node-input !border-2 !border-white"
@@ -49,4 +60,4 @@ export const InputNode = memo(({ data }: NodeProps & { data: NodeData }) => {
    )
 })
 
-InputNode.displayName = 'InputNode'
+TextInputNode.displayName = 'TextInputNode'

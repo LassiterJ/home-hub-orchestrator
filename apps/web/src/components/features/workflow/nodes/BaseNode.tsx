@@ -1,7 +1,7 @@
 import { NodeStatusIndicator, NodeStatusIndicatorProps } from '@/components/features/workflow/NodeStatusIndicator'
 import { cn } from '@/utils/utils'
 import { forwardRef, type HTMLAttributes } from 'react'
-import { NodeToolbar, type Position } from '@xyflow/react'
+import { NodeResizer, NodeToolbar, type Position } from '@xyflow/react'
 import {
    Menubar,
    MenubarCheckboxItem,
@@ -18,16 +18,41 @@ import {
    MenubarTrigger,
 } from '@/components/ui/Menubar'
 
-export const BaseNode = forwardRef<
-   HTMLDivElement,
-   HTMLAttributes<HTMLDivElement> & {
+
+export type BaseNodeProps = HTMLAttributes<HTMLDivElement> & {
    status?: NodeStatusIndicatorProps['status']
    statusIndicatorVariant?: NodeStatusIndicatorProps['variant']
    forceToolbarVisible?: boolean,
    toolbarPosition?: Position,
+   resizeable?: boolean,
+   selected?: boolean,
+   nodeResizeColor?: string
+
 }
->(({ className, status = 'initial', statusIndicatorVariant, forceToolbarVisible, toolbarPosition, ...props }, ref) => (
+
+export const BaseNode = forwardRef<
+   HTMLDivElement,
+   BaseNodeProps
+>(({
+      className,
+      status = 'initial',
+      statusIndicatorVariant,
+      forceToolbarVisible,
+      toolbarPosition,
+      resizeable = true,
+      selected = false,
+      nodeResizeColor,
+      ...props
+   }, ref) => (
    <>
+      {resizeable &&
+         <NodeResizer
+            color={nodeResizeColor || '#ff0071'}
+            isVisible={selected} //TODO: use state from Toolbar's resize button
+            minWidth={100}
+            minHeight={30}
+         />}
+
       <NodeToolbar
          isVisible={forceToolbarVisible || undefined}
          position={toolbarPosition}
@@ -127,7 +152,7 @@ export const BaseNode = forwardRef<
             className={cn(
                'relative rounded-md border bg-card text-card-foreground',
                'hover:ring-1',
-               // React Flow displays node elements inside of a `NodeWrapper` component,
+               // React Flow displays node elements inside a `NodeWrapper` component,
                // which compiles down to a div with the class `react-flow__node`.
                // When a node is selected, the class `selected` is added to the
                // `react-flow__node` element. This allows us to style the node when it
