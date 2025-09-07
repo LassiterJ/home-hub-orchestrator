@@ -14,7 +14,7 @@
 // } from "@xyflow/react";
 // import '@xyflow/react/dist/style.css';
 import { createFileRoute } from '@tanstack/react-router'
-import {WorkflowBuilder} from "../components/features/workflow/WorkflowBuilder"
+import { WorkflowBuilder } from '@/components/features/workflow/WorkflowBuilder'
 // import type {NodeData} from '../types'
 //
 // /** ---- Minimal shared types matching your Zod schema.ts ---- */

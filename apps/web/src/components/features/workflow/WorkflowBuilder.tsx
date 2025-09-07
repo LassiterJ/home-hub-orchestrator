@@ -1,4 +1,3 @@
-import React, { useCallback, useRef, useState } from 'react'
 import {
    addEdge,
    Background,
@@ -13,11 +12,8 @@ import {
    useNodesState,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
+import React, { useCallback, useRef, useState } from 'react'
 
-import NodeSidebar from './NodeSidebar'
-import { FormNode, ModelNode, OutputNode, ProcessingNode, TextInputNode } from './nodes'
-import { sampleContextMenu, sampleEdges, sampleNodes } from './sampleWorkflow'
-import { NodeData } from '@/types'
 import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
 import {
    ContextMenu,
@@ -35,7 +31,10 @@ import {
    ContextMenuTrigger,
    MenuItemSpec,
 } from '@/components/ui/ContextMenu'
-import { FormGroupNode } from '@/components/features/workflow/nodes/FormNode'
+import { NodeData } from '@/types'
+import NodeSidebar from './NodeSidebar'
+import { FormNode, ModelNode, OutputNode, ProcessingNode, TextInputNode } from './nodes'
+import { sampleContextMenu, sampleEdges, sampleNodes } from './sampleWorkflow'
 
 const nodeTypes: NodeTypes = {
    input: TextInputNode,
@@ -44,7 +43,6 @@ const nodeTypes: NodeTypes = {
    output: OutputNode,
    schema: DatabaseSchemaDemo,
    form: FormNode,
-   formGroup: FormGroupNode,
 }
 type MenuPosition = {
    top?: number
@@ -95,13 +93,9 @@ export const WorkflowBuilder = () => {
             type,
             position,
             data: {
+               type: type,
                label: `${type.charAt(0).toUpperCase() + type.slice(1)} Node`,
                description: `A ${type} node for your workflow`,
-               kind: type,
-               runtime: 'default', // or whichever runtime string makes sense in your system
-               effect: 'none',     // replace with your default effect
-               inputs: [],
-               outputs: [],
             },
          }
 
@@ -128,7 +122,7 @@ export const WorkflowBuilder = () => {
    )
    const { menuContent = defaultMenuContent, ...restMenu } = menu ?? {}
    /** Use this to trigger the context menu without wrapping the ReactFlow component:
-    *
+    * https://github.com/xyflow/xyflow/discussions/3089
     *
     * const triggerRightClick = (
     *     element: HTMLSpanElement,
@@ -150,48 +144,58 @@ export const WorkflowBuilder = () => {
     * */
 
    return (
-      <div className="h-screen flex bg-canvas">
+      // React Flow requires its parent to have an explicit width and height.
+      // We set the overall layout to a fixed viewport height to avoid 0-height
+      // calculations during initial mount which would trigger React Flow error 004.
+      <div className="h-screen w-100vh flex bg-canvas">
          <NodeSidebar />
-         <div className="flex-1 relative" ref={ref}>
+         {/*
+          * IMPORTANT: Give the immediate React Flow ancestor an explicit height.
+          * Without this, `height: 100%` on the flow container resolves to 0
+          * when the parent's computed height is "auto", causing error 004.
+          */}
+         <div className="flex-1 relative min-h-0 h-screen" ref={ref}>
             <ContextMenu>
-               <ContextMenuTrigger
-                  className="">
-                  <ReactFlow
-                     nodes={nodes}
-                     edges={edges}
-                     onNodesChange={onNodesChange}
-                     onEdgesChange={onEdgesChange}
-                     onConnect={onConnect}
-                     onInit={setReactFlowInstance}
-                     onNodeContextMenu={onNodeContextMenu}
-                     onDrop={onDrop}
-                     onDragOver={onDragOver}
-                     nodeTypes={nodeTypes}
-                     fitView
-                     className="bg-canvas"
-                  >
+               <ContextMenuTrigger asChild>
+                  <div className="h-full w-full">
+                     <ReactFlow
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
+                        onInit={setReactFlowInstance}
+                        onNodeContextMenu={onNodeContextMenu}
+                        onDrop={onDrop}
+                        onDragOver={onDragOver}
+                        nodeTypes={nodeTypes}
+                        fitView
+                        className="bg-canvas"
+                        style={{ width: '100%', height: '100%' }}
+                     >
 
 
-                     <Controls className="!bottom-4 !left-4" />
-                     <MiniMap
-                        className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
-                        nodeColor={(node) => {
-                           switch (node.type) {
-                              case 'input':
-                                 return 'hsl(var(--node-input))'
-                              case 'model':
-                                 return 'hsl(var(--node-model))'
-                              case 'processing':
-                                 return 'hsl(var(--node-processing))'
-                              case 'output':
-                                 return 'hsl(var(--node-output))'
-                              default:
-                                 return 'hsl(var(--muted))'
-                           }
-                        }}
-                     />
-                     <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
-                  </ReactFlow>
+                        <Controls className="!bottom-4 !left-4" />
+                        <MiniMap
+                           className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
+                           nodeColor={(node) => {
+                              switch (node.type) {
+                                 case 'input':
+                                    return 'hsl(var(--node-input))'
+                                 case 'model':
+                                    return 'hsl(var(--node-model))'
+                                 case 'processing':
+                                    return 'hsl(var(--node-processing))'
+                                 case 'output':
+                                    return 'hsl(var(--node-output))'
+                                 default:
+                                    return 'hsl(var(--muted))'
+                              }
+                           }}
+                        />
+                        <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
+                     </ReactFlow>
+                  </div>
                </ContextMenuTrigger>
                <ContextMenuContent className="w-52">
                   <ContextMenuItem inset>
@@ -233,8 +237,6 @@ export const WorkflowBuilder = () => {
                   </ContextMenuRadioGroup>
                </ContextMenuContent>
             </ContextMenu>
-
-
          </div>
       </div>
    )

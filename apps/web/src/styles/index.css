@@ -37,7 +37,7 @@
     --font-sans: Mulish, ui-sans-serif, sans-serif, system-ui;
     --font-serif: Cantata One, ui-serif, serif;
     --font-mono: Source Code Pro, ui-monospace, monospace;
-    --radius: 0rem;
+    --radius: .2rem;
     --shadow-2xs: 4px 5.5px 6px -1px hsl(30.0000 13.7255% 20% / 0.02);
     --shadow-xs: 4px 5.5px 6px -1px hsl(30.0000 13.7255% 20% / 0.02);
     --shadow-sm: 4px 5.5px 6px -1px hsl(30.0000 13.7255% 20% / 0.04), 4px 1px 2px -2px hsl(30.0000 13.7255% 20% / 0.04);

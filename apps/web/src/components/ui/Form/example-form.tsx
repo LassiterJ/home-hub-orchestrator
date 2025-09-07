@@ -7,6 +7,7 @@ import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button/Button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
+import { Input } from '@/components/ui/Input'
 
 const FormSchema = z.object({
    username: z.string().min(2, {
@@ -42,7 +43,7 @@ export function ExampleForm() {
                   <FormItem>
                      <FormLabel>Username</FormLabel>
                      <FormControl>
-                        <TextInput placeholder="shadcn" {...field} />
+                        <Input placeholder="shadcn" {...field} />
                      </FormControl>
                      <FormDescription>
                         This is your public display name.

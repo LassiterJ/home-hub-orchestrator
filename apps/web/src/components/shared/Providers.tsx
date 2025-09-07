@@ -8,6 +8,7 @@ import '@/styles/index.css'
 import { createTRPCClient, httpBatchLink, httpLink, isNonJsonSerializable, splitLink } from '@trpc/client'
 import { AppRouter } from '../../../../server/src/trpc'
 import { useState } from 'react'
+import { SidebarProvider } from '@/components/ui/Sidebar'
 
 
 interface ProvidersProps {
@@ -67,7 +68,9 @@ export const Providers = ({ router }: ProvidersProps) => {
    return (
       <QueryClientProvider client={queryClient}>
          <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-            <RouterProvider router={router} />
+            <SidebarProvider>
+               <RouterProvider router={router} />
+            </SidebarProvider>
          </TRPCProvider>
       </QueryClientProvider>
    )

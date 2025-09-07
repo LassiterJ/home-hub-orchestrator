@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/form-builder')({
+export const Route = createFileRoute('/form-builder-v2')({
    component: FormBuilderPageV2,
-});
+})
 
 /**
  * FormBuilderPageV2
@@ -43,8 +43,4 @@ export const Route = createFileRoute('/form-builder')({
  *          Step (symbolizes a step in a wizard-style form)
  *
  * */
-export const FormBuilderPageV2 = () => {
 
-   return()
-
-};

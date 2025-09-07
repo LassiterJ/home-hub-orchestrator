@@ -4,6 +4,7 @@ import { BaseNode, BaseNodeContent, BaseNodeHeader } from '@/components/features
 import { TableBody, TableCell, TableRow } from '@/components/ui/Table/Table'
 import { Position } from '@xyflow/react'
 import { LabeledHandle } from '../../handles/LabeledHandle'
+import { NodeData } from '@/types'
 
 /* DATABASE SCHEMA NODE HEADER ------------------------------------------------ */
 /**
@@ -101,15 +102,13 @@ export const DatabaseSchemaNode = ({
 
 /* Full Component -------------------------------------------------------------- */
 
-export type DatabaseSchemaNodeData = {
-   data: {
-      label: string;
-      schema: { title: string; type: string }[];
-   };
+export type DatabaseSchemaNodeData = NodeData & {
+   schema: { title: string; type: string }[];
+
 };
 
-const DatabaseSchemaDemo = memo(({ data }: DatabaseSchemaNodeData) => {
-   console.log('DatabaseSchemaDemo. data: ', data)
+const DatabaseSchemaDemo = memo(({ data }: Node<DatabaseSchemaNodeData>) => {
+
    return (
       <DatabaseSchemaNode className="p-0">
          <DatabaseSchemaNodeHeader>{data.label}</DatabaseSchemaNodeHeader>
