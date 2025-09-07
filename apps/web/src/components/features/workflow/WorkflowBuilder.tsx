@@ -1,40 +1,15 @@
-import {
-   addEdge,
-   Background,
-   BackgroundVariant,
-   Connection,
-   Controls,
-   MiniMap,
-   Node,
-   NodeTypes,
-   ReactFlow,
-   useEdgesState,
-   useNodesState,
-} from '@xyflow/react'
+import { addEdge, Connection, Node, NodeTypes, useEdgesState, useNodesState } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import React, { useCallback, useRef, useState } from 'react'
 
 import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
-import {
-   ContextMenu,
-   ContextMenuCheckboxItem,
-   ContextMenuContent,
-   ContextMenuItem,
-   ContextMenuLabel,
-   ContextMenuRadioGroup,
-   ContextMenuRadioItem,
-   ContextMenuSeparator,
-   ContextMenuShortcut,
-   ContextMenuSub,
-   ContextMenuSubContent,
-   ContextMenuSubTrigger,
-   ContextMenuTrigger,
-   MenuItemSpec,
-} from '@/components/ui/ContextMenu'
+import { MenuItemSpec } from '@/components/ui/ContextMenu'
 import { NodeData } from '@/types'
-import NodeSidebar from './NodeSidebar'
 import { FormNode, ModelNode, OutputNode, ProcessingNode, TextInputNode } from './nodes'
 import { sampleContextMenu, sampleEdges, sampleNodes } from './sampleWorkflow'
+import { SidebarInset, SidebarProvider } from '@/components/ui/Sidebar'
+import { SiteHeader } from '@/components/shared/PageHeader'
+import { AppSidebar } from '@/components/features/workflow/AppSidebar'
 
 const nodeTypes: NodeTypes = {
    input: TextInputNode,
@@ -147,97 +122,115 @@ export const WorkflowBuilder = () => {
       // React Flow requires its parent to have an explicit width and height.
       // We set the overall layout to a fixed viewport height to avoid 0-height
       // calculations during initial mount which would trigger React Flow error 004.
-      <div className="h-screen w-100vh flex bg-canvas">
-         <NodeSidebar />
-         {/*
-          * IMPORTANT: Give the immediate React Flow ancestor an explicit height.
-          * Without this, `height: 100%` on the flow container resolves to 0
-          * when the parent's computed height is "auto", causing error 004.
-          */}
-         <div className="flex-1 relative min-h-0 h-screen" ref={ref}>
-            <ContextMenu>
-               <ContextMenuTrigger asChild>
-                  <div className="h-full w-full">
-                     <ReactFlow
-                        nodes={nodes}
-                        edges={edges}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        onConnect={onConnect}
-                        onInit={setReactFlowInstance}
-                        onNodeContextMenu={onNodeContextMenu}
-                        onDrop={onDrop}
-                        onDragOver={onDragOver}
-                        nodeTypes={nodeTypes}
-                        fitView
-                        className="bg-canvas"
-                        style={{ width: '100%', height: '100%' }}
-                     >
-
-
-                        <Controls className="!bottom-4 !left-4" />
-                        <MiniMap
-                           className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
-                           nodeColor={(node) => {
-                              switch (node.type) {
-                                 case 'input':
-                                    return 'hsl(var(--node-input))'
-                                 case 'model':
-                                    return 'hsl(var(--node-model))'
-                                 case 'processing':
-                                    return 'hsl(var(--node-processing))'
-                                 case 'output':
-                                    return 'hsl(var(--node-output))'
-                                 default:
-                                    return 'hsl(var(--muted))'
-                              }
-                           }}
-                        />
-                        <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
-                     </ReactFlow>
+      <div className="[--header-height:calc(--spacing(14))]">
+         <SidebarProvider className="flex flex-col">
+            <SiteHeader />
+            <div className="flex flex-1">
+               <AppSidebar />
+               <SidebarInset>
+                  <div className="flex flex-1 flex-col gap-4 p-4">
+                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                        <div className="bg-muted/50 aspect-video rounded-xl" />
+                        <div className="bg-muted/50 aspect-video rounded-xl" />
+                        <div className="bg-muted/50 aspect-video rounded-xl" />
+                     </div>
+                     <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
                   </div>
-               </ContextMenuTrigger>
-               <ContextMenuContent className="w-52">
-                  <ContextMenuItem inset>
-                     Back
-                     <ContextMenuShortcut>⌘[</ContextMenuShortcut>
-                  </ContextMenuItem>
-                  <ContextMenuItem inset disabled>
-                     Forward
-                     <ContextMenuShortcut>⌘]</ContextMenuShortcut>
-                  </ContextMenuItem>
-                  <ContextMenuItem inset>
-                     Reload
-                     <ContextMenuShortcut>⌘R</ContextMenuShortcut>
-                  </ContextMenuItem>
-                  <ContextMenuSub>
-                     <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
-                     <ContextMenuSubContent className="w-44">
-                        <ContextMenuItem>Save Page...</ContextMenuItem>
-                        <ContextMenuItem>Create Shortcut...</ContextMenuItem>
-                        <ContextMenuItem>Name Window...</ContextMenuItem>
-                        <ContextMenuSeparator />
-                        <ContextMenuItem>Developer Tools</ContextMenuItem>
-                        <ContextMenuSeparator />
-                        <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
-                     </ContextMenuSubContent>
-                  </ContextMenuSub>
-                  <ContextMenuSeparator />
-                  <ContextMenuCheckboxItem checked>
-                     Show Bookmarks
-                  </ContextMenuCheckboxItem>
-                  <ContextMenuCheckboxItem>Show Full URLs</ContextMenuCheckboxItem>
-                  <ContextMenuSeparator />
-                  <ContextMenuRadioGroup value="pedro">
-                     <ContextMenuLabel inset>People</ContextMenuLabel>
-                     <ContextMenuRadioItem value="pedro">
-                        Pedro Duarte
-                     </ContextMenuRadioItem>
-                     <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
-                  </ContextMenuRadioGroup>
-               </ContextMenuContent>
-            </ContextMenu>
-         </div>
+               </SidebarInset>
+            </div>
+         </SidebarProvider>
       </div>
+      // <div className="h-screen w-100vh flex bg-canvas">
+      //    <NodeSidebar />
+      //    {/*
+      //        * IMPORTANT: Give the immediate React Flow ancestor an explicit height.
+      //        * Without this, `height: 100%` on the flow container resolves to 0
+      //        * when the parent's computed height is "auto", causing error 004.
+      //        */}
+      //    <div className="flex-1 relative min-h-4 min-w-10 h-screen " ref={ref}>
+      //       <ContextMenu>
+      //          <ContextMenuTrigger asChild>
+      //             <div className="h-full w-full">
+      //                <ReactFlow
+      //                   nodes={nodes}
+      //                   edges={edges}
+      //                   onNodesChange={onNodesChange}
+      //                   onEdgesChange={onEdgesChange}
+      //                   onConnect={onConnect}
+      //                      onInit={setReactFlowInstance}
+      //                      onNodeContextMenu={onNodeContextMenu}
+      //                      onDrop={onDrop}
+      //                      onDragOver={onDragOver}
+      //                      nodeTypes={nodeTypes}
+      //                      fitView
+      //                      className="bg-canvas"
+      //                      style={{ width: '100%', height: '100%' }}
+      //                   >
+      //
+      //
+      //                      <Controls className="!bottom-4 !left-4" />
+      //                      <MiniMap
+      //                         className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
+      //                         nodeColor={(node) => {
+      //                            switch (node.type) {
+      //                               case 'input':
+      //                                  return 'hsl(var(--node-input))'
+      //                               case 'model':
+      //                                  return 'hsl(var(--node-model))'
+      //                               case 'processing':
+      //                                  return 'hsl(var(--node-processing))'
+      //                               case 'output':
+      //                                  return 'hsl(var(--node-output))'
+      //                               default:
+      //                                  return 'hsl(var(--muted))'
+      //                            }
+      //                         }}
+      //                      />
+      //                      <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
+      //                   </ReactFlow>
+      //                </div>
+      //             </ContextMenuTrigger>
+      //             <ContextMenuContent className="w-52">
+      //                <ContextMenuItem inset>
+      //                   Back
+      //                   <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+      //                </ContextMenuItem>
+      //                <ContextMenuItem inset disabled>
+      //                   Forward
+      //                   <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+      //                </ContextMenuItem>
+      //                <ContextMenuItem inset>
+      //                   Reload
+      //                   <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+      //                </ContextMenuItem>
+      //                <ContextMenuSub>
+      //                   <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
+      //                   <ContextMenuSubContent className="w-44">
+      //                      <ContextMenuItem>Save Page...</ContextMenuItem>
+      //                      <ContextMenuItem>Create Shortcut...</ContextMenuItem>
+      //                      <ContextMenuItem>Name Window...</ContextMenuItem>
+      //                      <ContextMenuSeparator />
+      //                      <ContextMenuItem>Developer Tools</ContextMenuItem>
+      //                      <ContextMenuSeparator />
+      //                      <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
+      //                   </ContextMenuSubContent>
+      //                </ContextMenuSub>
+      //                <ContextMenuSeparator />
+      //                <ContextMenuCheckboxItem checked>
+      //                   Show Bookmarks
+      //                </ContextMenuCheckboxItem>
+      //                <ContextMenuCheckboxItem>Show Full URLs</ContextMenuCheckboxItem>
+      //                <ContextMenuSeparator />
+      //                <ContextMenuRadioGroup value="pedro">
+      //                   <ContextMenuLabel inset>People</ContextMenuLabel>
+      //                   <ContextMenuRadioItem value="pedro">
+      //                      Pedro Duarte
+      //                   </ContextMenuRadioItem>
+      //                   <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+      //                </ContextMenuRadioGroup>
+      //             </ContextMenuContent>
+      //          </ContextMenu>
+      //       </div>
+      //    </div>
    )
 }

@@ -1,12 +1,8 @@
 import { createRouter } from '@tanstack/react-router'
 
-import { routeTree } from '../../routeTree.gen'
+import { routeTree } from '@/routeTree.gen'
 
 import { Providers } from '../shared'
-
-
-
-
 
 
 // Create router
@@ -16,9 +12,7 @@ export type RouterInstance = typeof router
 
 export const App = () => {
    return (
-      <main className={"h-full"}>
-         <Providers router={router} />
-      </main>
+      <Providers router={router} />
    )
 }
 // export const App = () => {
