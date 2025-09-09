@@ -67,9 +67,9 @@ export const Providers = ({ router }: ProvidersProps) => {
    return (
       <QueryClientProvider client={queryClient}>
          <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-            {/*<SidebarProvider>*/}
+            {/*<ReactFlowProvider>*/}
             <RouterProvider router={router} />
-            {/*</SidebarProvider>*/}
+            {/*</ReactFlowProvider>*/}
          </TRPCProvider>
       </QueryClientProvider>
    )

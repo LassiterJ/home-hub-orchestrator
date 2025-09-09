@@ -158,6 +158,10 @@
     body {
         @apply bg-background text-foreground;
         font-family: var(--font-sans);
+        /* Prevent zoom on mobile when tapping */
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        user-select: none;
     }
 }
 
