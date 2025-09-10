@@ -307,7 +307,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             const hasMatchingId = (items: FormNode[], id: string) =>
                items.some(item => item.id === id)
             if (!formIntersections || formIntersections.length < 1) {
-               console.log('**** NOT REGISTERING FORM INTERSECTION ****')
                setNodes((ns) => [...ns, newNode])
                return
             }
@@ -344,8 +343,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             )
 
          }
-
-         setNodes((nds) => nds.concat(newNode))
 
 
       },
