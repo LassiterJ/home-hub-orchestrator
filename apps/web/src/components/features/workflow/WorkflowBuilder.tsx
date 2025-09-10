@@ -22,8 +22,9 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/Sidebar'
 import { FormNode, ModelNode, OutputNode, ProcessingNode } from './nodes'
 import { TextInputNode } from './nodes/form/TextInputNode'
 import { sampleEdges, sampleNodes } from '@/components/features/workflow/sampleWorkflow'
+import { Input } from '@/components/ui/Input'
 
-const nodeTypes: NodeTypes = {
+export const nodeTypes: NodeTypes = {
    input: TextInputNode,
    model: ModelNode,
    processing: ProcessingNode,
@@ -31,6 +32,10 @@ const nodeTypes: NodeTypes = {
    schema: DatabaseSchemaDemo,
    form: FormNode,
 }
+export const formNodeFormControlMap = {
+   input: Input,
+}
+
 type MenuPosition = {
    top?: number
    left?: number
@@ -258,6 +263,7 @@ export const WorkflowBuilder = () => {
                            // onNodeContextMenu={onNodeContextMenu} TODO: re-implement context menu
                            nodeTypes={nodeTypes}
                            fitView
+                           selectNodesOnDrag={false}
                            className="bg-canvas"
                            style={{ width: '100%', height: '100%' }}
                         >

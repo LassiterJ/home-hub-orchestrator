@@ -10,26 +10,31 @@ import {
 } from '@/components/features/workflow/nodes/BaseNode'
 import { Input } from '@/components/ui/Input'
 import { BaseHandle } from '@/components/features/workflow/handles/BaseHandle'
-import { NodeData } from '@/types'
+import { type NodeData } from '@/types'
+import { type NodeStatus } from '@/components/features/workflow/NodeStatusIndicator'
 
-type TexInputData = NodeData & { text?: string };
+type TexInputData = NodeData & { text?: string, status?: NodeStatus };
 export type TextInputNode = Node<TexInputData, 'text'>
-export const TextInputNode = memo(({ id, data, ...restProps }: NodeProps<TextInputNode>) => {
+export const TextInputNode = memo((props: NodeProps<TextInputNode>) => {
+   console.log('props: ', props)
+   const { id, data, ...restProps } = props
    const { updateNodeData } = useReactFlow()
 
    const handleOnChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
       updateNodeData(id, { text: e.target.value })
    }, [])
+   console.log('data:', data)
 
+   const { status = 'initial', label } = data
    return (
-      <BaseNode {...restProps}>
+      <BaseNode status={status}>
          <BaseNodeHeader>
             <div className="flex items-center gap-2">
                <div className="p-1.5 rounded bg-node-input/20">
                   <Database size={14} className="text-node-input" />
                </div>
                <BaseNodeHeaderTitle className="text-sm">
-                  {data.label}
+                  {label}
                </BaseNodeHeaderTitle>
             </div>
          </BaseNodeHeader>

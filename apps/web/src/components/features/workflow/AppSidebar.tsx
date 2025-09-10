@@ -1,3 +1,6 @@
+import { FormNode } from '@/components/features/workflow/nodes'
+import { DraggableNode } from '@/components/features/workflow/nodes/DraggableNode'
+import { formNodeFormControlMap } from '@/components/features/workflow/WorkflowBuilder'
 import { SearchForm } from '@/components/shared/SearchForm'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
 import {
@@ -11,11 +14,11 @@ import {
    SidebarMenuItem,
    SidebarRail,
 } from '@/components/ui/Sidebar'
+import { type DragEventData } from '@neodrag/react'
+import { Rect, useReactFlow, type XYPosition } from '@xyflow/react'
 import { BarChart3, Brain, ChevronRight, FileText, Settings, Table, Text, Upload, Zap } from 'lucide-react'
 import * as React from 'react'
 import { useCallback } from 'react'
-import { useReactFlow, XYPosition } from '@xyflow/react'
-import { DraggableNode } from '@/components/features/workflow/nodes/DraggableNode'
 
 // This is contains sample data.
 const data = {
@@ -34,6 +37,7 @@ const data = {
                type: 'form',
                label: 'Form Node',
                icon: FileText,
+               fieldsData: {},
                description: 'Update the configuration at your own risk',
             },
          ],
@@ -122,12 +126,16 @@ const data = {
 }
 
 // -------- types --------------------------------------------------------------
-type SidebarNode = {
-   type: string
-   label: string
-   icon: React.ComponentType<{ size?: number }>
-   description: string
-}
+// type SidebarNode = {
+//    type: string
+//    label: string
+//    icon: React.ComponentType<{ size?: number }>
+//    description: string
+// }
+type CurrentNode = DragEventData['currentNode']
+export type handleNodeDragArgs = { currentDragNode: CurrentNode, screenPosition: XYPosition };
+export type handleNodeDropArgs = { nodeType: string, currentDragNode: CurrentNode, screenPosition: XYPosition };
+
 
 // -------- helpers ------------------------------------------------------------
 const getBadgeClass = (t: string) => {
@@ -179,13 +187,90 @@ const getBadgeClass = (t: string) => {
 //       </SidebarMenuItem>
 //    )
 // }
+
+
+/**
+ * Behavior change for dragging from menu to canvas
+ * When dragNode enters flow on first time create a new flowNode
+ * switch dragNode with flowNode so RH knows when this node is intersecting with an existing node via getIntersectingNodes or isIntersecting
+ *
+ * */
+
 let id = 0
 const getId = () => `dndnode_${id++}` //TODO setup uuid.
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-   const { setNodes, screenToFlowPosition } = useReactFlow()
+   const { setNodes, screenToFlowPosition, getIntersectingNodes } = useReactFlow()
 
+   const handleNodeDrag = useCallback(({ currentDragNode, screenPosition }: handleNodeDragArgs) => {
+      const flow = document.querySelector('.react-flow')
+      const flowRect = flow?.getBoundingClientRect()
+      const isInFlow =
+         flowRect &&
+         screenPosition.x >= flowRect.left &&
+         screenPosition.x <= flowRect.right &&
+         screenPosition.y >= flowRect.top &&
+         screenPosition.y <= flowRect.bottom
+      //  does node exist
+      if (isInFlow) {
+         const position = screenToFlowPosition(screenPosition)
+         let boundingClientRect = currentDragNode.getBoundingClientRect()
+
+         const rect: Rect = {
+            x: position.x,
+            y: position.y,
+            width: boundingClientRect.width,
+            height: boundingClientRect.height,
+         }
+
+         const intersections = getIntersectingNodes(rect, true)
+         console.log('intersections: ', intersections)
+         const formIntersections: false[] | FormNode[] = intersections.map((node) => node.type === 'form' && node)
+
+         const hasMatchingId = (items: FormNode[], id: string) =>
+            items.some(item => item.id === id)
+
+         setNodes((ns) =>
+            ns.map((n) => {
+               console.log('n: ', n)
+               console.log('n.data.status: ', n?.data.status)
+               const initialStatus = n.data.status
+               const isAlreadyHighlighted = initialStatus === 'intersected'
+               const isMatchingElement = hasMatchingId(formIntersections, n.id)
+               const status = () => {
+                  if (isAlreadyHighlighted && !isMatchingElement) {
+                     return 'default'
+                  }
+                  if (isMatchingElement) {
+                     return 'intersected'
+                  }
+                  return n.data.status
+               }
+
+               return {
+                  ...n,
+                  data: {
+                     ...(n.data),
+                     status: status(),
+                  },
+               }
+            }),
+         )
+      }
+   }, [])
+   // const getStatus = ({ initialStatus, formIntersections, matchId, node }) => {
+   //    const isAlreadyHighlighted = initialStatus === 'intersected'
+   //    const isMatchingElement = hasMatchingId(formIntersections, matchId)
+   //
+   //    if (isAlreadyHighlighted && !isMatchingElement) {
+   //       return 'default'
+   //    }
+   //    if (isMatchingElement) {
+   //       return 'intersected'
+   //    }
+   //    return node.data.status
+   // }
    const handleNodeDrop = useCallback(
-      (nodeType: string, screenPosition: XYPosition) => {
+      ({ nodeType, currentDragNode, screenPosition }: handleNodeDropArgs) => {
          const flow = document.querySelector('.react-flow')
          const flowRect = flow?.getBoundingClientRect()
          const isInFlow =
@@ -195,23 +280,77 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             screenPosition.y >= flowRect.top &&
             screenPosition.y <= flowRect.bottom
 
+         const position = screenToFlowPosition(screenPosition)
+
+         const newNode = {
+            id: getId(),
+            type: nodeType,
+            position,
+            data: { label: `${nodeType} node` },
+         }
          // Create a new node and add it to the flow
          if (isInFlow) {
-            const position = screenToFlowPosition(screenPosition)
 
-            const newNode = {
-               id: getId(),
-               type: nodeType,
-               position,
-               data: { label: `${nodeType} node` },
+
+            // Is dropped on form?
+            let boundingClientRect = currentDragNode.getBoundingClientRect()
+
+            const rect: Rect = {
+               x: position.x,
+               y: position.y,
+               width: boundingClientRect.width,
+               height: boundingClientRect.height,
             }
 
-            setNodes((nds) => nds.concat(newNode))
+            const intersections = getIntersectingNodes(rect, true)
+            const formIntersections: false | FormNode[] = intersections.map((node) => node.type === 'form' && node)
+            const hasMatchingId = (items: FormNode[], id: string) =>
+               items.some(item => item.id === id)
+            if (!formIntersections || formIntersections.length < 1) {
+               console.log('**** NOT REGISTERING FORM INTERSECTION ****')
+               setNodes((ns) => [...ns, newNode])
+               return
+            }
+            setNodes((ns) =>
+               ns.map((n) => {
+                  if (!hasMatchingId(formIntersections, n.id)) {
+                     return n
+                  }
+
+                  const getStatus = ({ prevStatus = 'initial' }) => {
+                     const isAlreadyHighlighted = prevStatus === 'intersected'
+                     return isAlreadyHighlighted ? 'initial' : prevStatus
+                  }
+                  const status = getStatus({ prevStatus: n?.data?.status })
+                  console.log('nodeType: ', nodeType)
+                  console.log('formNodeMap: ', formNodeFormControlMap[`${nodeType}`])
+                  const newField = {
+                     name: 'default',
+                     label: 'default',
+                     placeholder: 'placeholder',
+                     Control: formNodeFormControlMap[nodeType],
+                     description: ' test description',
+                  }
+                  const tempFieldsData = n?.data?.fieldsData || []
+                  return {
+                     ...n,
+                     data: {
+                        ...n.data,
+                        status: status,
+                        fieldsData: [...tempFieldsData, newField],
+                     },
+                  }
+               }),
+            )
+
          }
+
+         setNodes((nds) => nds.concat(newNode))
+
+
       },
       [setNodes, screenToFlowPosition],
    )
-   console.log('AppSidebar Props: ', props)
    return (
       <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
          <SidebarHeader>
@@ -243,6 +382,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     <DraggableNode
                                        nodeType={node.type}
                                        onDrop={handleNodeDrop}
+                                       onDrag={handleNodeDrag}
                                        className={'inline-flex align-baseline'}>
                                        <div
                                           className={`${getBadgeClass(node.type)}  p-1.5 rounded-md `}>

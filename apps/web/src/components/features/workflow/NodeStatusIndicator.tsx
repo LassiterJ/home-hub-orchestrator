@@ -3,7 +3,7 @@ import { LoaderCircle } from 'lucide-react'
 
 import { cn } from '@/utils'
 
-export type NodeStatus = 'loading' | 'success' | 'error' | 'initial';
+export type NodeStatus = 'loading' | 'intersected' | 'success' | 'error' | 'initial';
 
 export type NodeStatusVariant = 'overlay' | 'border';
 
@@ -107,6 +107,11 @@ export const NodeStatusIndicator = ({
       case 'success':
          return (
             <StatusBorder className="border-emerald-600">{children}</StatusBorder>
+         )
+      case 'intersected':
+         console.log('intersected Status')
+         return (
+            <StatusBorder className="border-purple-600">{children}</StatusBorder>
          )
       case 'error':
          return <StatusBorder className="border-red-400">{children}</StatusBorder>

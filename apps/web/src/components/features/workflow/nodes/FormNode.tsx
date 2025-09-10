@@ -41,6 +41,7 @@ type FormInputData = NodeData & {
    onSubmit?: () => void,
    disabled: boolean,
    className: string
+   fieldsData: FieldForSchema<NodeData>[]
 };
 export type FormNode = Node<FormInputData, 'text'>
 
@@ -59,7 +60,7 @@ type FieldForSchema<T extends z.ZodTypeAny> = {
 function FormView<T extends z.ZodTypeAny>(
    {
       formSchema,
-      fieldsData,
+      fieldsData = [],
    }: {
       formSchema: T
       fieldsData: Array<FieldForSchema<T>>
@@ -119,6 +120,7 @@ export function FormNode({ data, selected }: NodeProps<FormNode>) {
       onSubmit,
       disabled = false,
       className,
+      fieldsData,
       ...restData
    } = data
    const Icon = icon
@@ -126,19 +128,19 @@ export function FormNode({ data, selected }: NodeProps<FormNode>) {
    const [isResizing, setIsResizing] = useState(false)
    // For now, use an empty schema; replace with your real, generated Zod object later.
    const [formSchema, setFormSchema] = useState<z.ZodTypeAny>(() => z.object({}))
-
-   const fieldsData = useMemo(() => {
-      return [
-         {
-            name: 'testName',
-            label: 'Test Field Label',
-            placeholder: 'Test Placeholder',
-            Control: Input,
-            description: 'test field description',
-         },
-      ] as Array<FieldForSchema<typeof formSchema>>
-      // Note: when you replace the schema with a concrete z.object({...}), update this typing accordingly.
-   }, [formSchema])
+   console.log('FieldsData: ', fieldsData)
+   // const fieldsData = useMemo(() => {
+   //    return [
+   //       {
+   //          name: 'testName',
+   //          label: 'Test Field Label',
+   //          placeholder: 'Test Placeholder',
+   //          Control: Input,
+   //          description: 'test field description',
+   //       },
+   //    ] as Array<FieldForSchema<typeof formSchema>>
+   //    // Note: when you replace the schema with a concrete z.object({...}), update this typing accordingly.
+   // }, [formSchema])
 
    // ToggleGroup passes an array of selected values when type="multiple"
    function handleToggleGroupValueChange(values: string[]) {
@@ -161,7 +163,7 @@ export function FormNode({ data, selected }: NodeProps<FormNode>) {
                </ToggleGroupItem>
             </ToggleGroup>
          </NodeToolbar>
-         <BaseNode className={className} status={status} resizeable={true} isResizing={isResizing} {...restData}>
+         <BaseNode className={className} status={status} resizeable={true} isResizing={isResizing}>
             {/* Header with form icon, title, and info tooltip */}
             <BaseNodeHeader>
                <div className="flex items-center gap-2">
