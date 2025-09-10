@@ -1,3 +1,6 @@
+import { type XYPosition } from '@xyflow/react'
+import { CurrentNode } from '../workflow/AppSidebar'
+
 /**
  * Returns the DOMRect for the React Flow container.
  * Keeping this local avoids querying multiple different selectors across the file.

@@ -133,7 +133,7 @@ const data = {
 //    icon: React.ComponentType<{ size?: number }>
 //    description: string
 // }
-type CurrentNode = DragEventData['currentNode']
+export type CurrentNode = DragEventData['currentNode']
 export type handleNodeDragArgs = { currentDragNode: CurrentNode, screenPosition: XYPosition };
 export type handleNodeDropArgs = { nodeType: string, currentDragNode: CurrentNode, screenPosition: XYPosition };
 
