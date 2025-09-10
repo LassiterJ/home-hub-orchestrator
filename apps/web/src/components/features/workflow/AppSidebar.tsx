@@ -20,6 +20,7 @@ import { BarChart3, Brain, ChevronRight, FileText, Settings, Table, Text, Upload
 import * as React from 'react'
 import { useCallback } from 'react'
 import { buildDragRect, getFlowRect, hasMatchingId, isPointInRect, nextStatusOnDrag } from './utils'
+import { getNewUUID } from '@/utils'
 
 // This is contains sample data.
 const data = {
@@ -154,8 +155,7 @@ const getBadgeClass = (t: string) => {
  *
  * */
 
-let id = 0
-const getId = () => `dndnode_${id++}` //TODO setup uuid.
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    const { setNodes, screenToFlowPosition, getIntersectingNodes } = useReactFlow()
 
@@ -209,7 +209,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
          // Empty canvas: create node
          if (formIntersections.length === 0) {
             const newNode = {
-               id: getId(), // Prefer crypto.randomUUID() if available
+               id: getNewUUID({ prefix: `node:${nodeType}` }), //TODO: when implementing backend, this will likely come from there.
                type: nodeType,
                position,
                data: { label: `${nodeType} node` },

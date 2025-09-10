@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/Input'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/ToggleGroup'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip'
 import { type NodeData } from '@/types'
+import { cn } from '@/utils'
+import { Label } from '@home-hub-orchestrator/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type DragEventData, events, position, useCompartment, useDraggable } from '@neodrag/react'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
@@ -17,8 +19,6 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { BaseNode, BaseNodeContent, BaseNodeFooter, BaseNodeHeader, BaseNodeHeaderTitle } from './BaseNode'
-import { Label } from '@home-hub-orchestrator/ui'
-import { cn } from '@/utils'
 
 /**
  * Notes:
@@ -63,6 +63,7 @@ export type FormNode = Node<FormInputData, 'text'>
 // `Control` is any React component that accepts standard input-like props.
 // You can tighten this later to your component library’s exact prop types.
 type FieldForSchema<T extends z.ZodTypeAny> = {
+   id: string //TODO is there a better type for uuid?
    name: keyof z.infer<T> & string
    label: string
    placeholder?: string
