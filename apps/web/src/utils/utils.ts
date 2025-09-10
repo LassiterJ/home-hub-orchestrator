@@ -8,7 +8,6 @@ export function cn(...inputs: ClassValue[]) {
 export type getNewUUIDOptions = {
    prefix?: string;
    suffix?: string;
-   delimiter?: string;
 }
 export const getNewUUID = ({ prefix, suffix = '' }: getNewUUIDOptions) => {
    const uuid = crypto.randomUUID()
@@ -19,7 +18,7 @@ export const getNewUUID = ({ prefix, suffix = '' }: getNewUUIDOptions) => {
       return `${str}-`
    }
    const _prefix = addDelimiter(prefix)
-   const _uuid = addDelimiter(uuid)
+   const _uuid = suffix.length < 1 ? uuid : addDelimiter(uuid)
 
    const fullUUID = `${_prefix}${_uuid}${suffix}`
    console.log('newUUID: ', fullUUID)

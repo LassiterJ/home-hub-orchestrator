@@ -2,9 +2,8 @@ import { memo, type ReactNode } from 'react'
 
 import { BaseNode, BaseNodeContent, BaseNodeHeader } from '@/components/features/workflow/nodes/BaseNode'
 import { TableBody, TableCell, TableRow } from '@/components/ui/Table/Table'
-import { Position } from '@xyflow/react'
+import { Node, NodeProps, Position } from '@xyflow/react'
 import { LabeledHandle } from '../../handles/LabeledHandle'
-import { NodeData } from '@/types'
 
 /* DATABASE SCHEMA NODE HEADER ------------------------------------------------ */
 /**
@@ -102,12 +101,12 @@ export const DatabaseSchemaNode = ({
 
 /* Full Component -------------------------------------------------------------- */
 
-export type DatabaseSchemaNodeData = NodeData & {
+export type DatabaseSchemaNode = Node<{
    schema: { title: string; type: string }[];
 
-};
+}, 'schema'>;
 
-const DatabaseSchemaDemo = memo(({ data }: Node<DatabaseSchemaNodeData>) => {
+const DatabaseSchemaDemo = memo(({ data }: NodeProps<DatabaseSchemaNode>) => {
 
    return (
       <DatabaseSchemaNode className="p-0">

@@ -1,25 +1,25 @@
 {
-   "name": "@home-hub-orchestrator/ui",
-   "version": "1.0.0",
-   "main": "src/index.tsx",
-   "types": "src/index.tsx",
-   "license": "MIT",
-   "dependencies": {
-      "@trpc/client": "^11.4.4",
-      "@trpc/react-query": "^11.4.4",
-      "@trpc/server": "^11.4.4",
-      "@trpc/tanstack-react-query": "^11.4.4",
-      "clsx": "^2.1.1",
-      "tailwind-merge": "^3.3.1"
-   },
-   "devDependencies": {
-      "@home-hub-orchestrator/eslint-config": "workspace:*",
-      "@home-hub-orchestrator/tsconfig": "workspace:*",
-      "@types/react": "^18.0.17",
-      "@types/react-dom": "^18.0.6",
-      "@types/styled-components": "^5.1.26",
-      "eslint": "^7.32.0",
-      "react": "^18.2.0",
-      "typescript": "^4.9.5"
-   }
+  "name": "@home-hub-orchestrator/ui",
+  "version": "1.0.0",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
+  "license": "MIT",
+  "dependencies": {
+    "@trpc/client": "^11.4.4",
+    "@trpc/react-query": "^11.4.4",
+    "@trpc/server": "^11.4.4",
+    "@trpc/tanstack-react-query": "^11.4.4",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@home-hub-orchestrator/eslint-config": "workspace:*",
+    "@home-hub-orchestrator/tsconfig": "workspace:*",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@types/styled-components": "^5.1.26",
+    "eslint": "^7.32.0",
+    "react": "^19.1.1",
+    "typescript": "^4.9.5"
+  }
 }

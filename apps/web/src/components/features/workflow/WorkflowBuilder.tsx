@@ -14,7 +14,7 @@ import {
 import '@xyflow/react/dist/style.css'
 import React, { useCallback } from 'react'
 
-import { AppSidebar } from '@/components/features/workflow/AppSidebar'
+import { WorkflowSidebar } from '@/components/features/workflow/WorkflowSidebar'
 import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
 import { SiteHeader } from '@/components/shared/PageHeader'
 import { MenuItemSpec } from '@/components/ui/ContextMenu'
@@ -32,6 +32,7 @@ export const nodeTypes: NodeTypes = {
    schema: DatabaseSchemaDemo,
    form: FormNode,
 }
+export type FormControlRendererKey = keyof typeof formNodeFormControlMap
 export const formNodeFormControlMap = {
    input: Input,
 }
@@ -64,7 +65,7 @@ export const WorkflowBuilder = () => {
             <SidebarProvider className="flex flex-col">
                <SiteHeader />
                <div className="flex flex-1">
-                  <AppSidebar />
+                  <WorkflowSidebar />
                   <SidebarInset>
                      <div className="h-full w-full">
                         <ReactFlow

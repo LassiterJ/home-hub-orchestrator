@@ -1,6 +1,6 @@
 import { FormNode } from '@/components/features/workflow/nodes'
 import { DraggableNode } from '@/components/features/workflow/nodes/DraggableNode'
-import { formNodeFormControlMap } from '@/components/features/workflow/WorkflowBuilder'
+import { FormControlRendererKey, formNodeFormControlMap } from '@/components/features/workflow/WorkflowBuilder'
 import { SearchForm } from '@/components/shared/SearchForm'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
 import {
@@ -156,7 +156,7 @@ const getBadgeClass = (t: string) => {
  * */
 
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    const { setNodes, screenToFlowPosition, getIntersectingNodes } = useReactFlow()
 
    /**
@@ -229,18 +229,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                const status = prevStatus === 'intersected' ? 'initial' : prevStatus
 
                // Resolve the form control for the palette node type
-               const Control = formNodeFormControlMap[nodeType]
-               if (!Control) {
-                  // TODO: replace with Winston logger
-                  // logger.warn('drop:unknownControl', { nodeType })
-               }
+
+               const Control = formNodeFormControlMap[nodeType as FormControlRendererKey]
 
                const newField = {
-                  name: 'default',
-                  label: 'default',
+                  id: getNewUUID({ prefix: 'formField' }),
+                  name: 'Name',
+                  label: 'Label',
                   placeholder: 'placeholder',
                   Control,
-                  description: ' test description',
+                  description: ' Description',
                }
 
                const fieldsData = Array.isArray(n?.data?.fieldsData) ? n.data.fieldsData : []
@@ -395,7 +393,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    )
 }
 
-// export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+// export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 //    return (
 //       <Sidebar {...props}>
 //          <SidebarHeader>

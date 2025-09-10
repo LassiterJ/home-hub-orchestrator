@@ -1,5 +1,5 @@
 import { Rect, type XYPosition } from '@xyflow/react'
-import { CurrentNode } from '../workflow/AppSidebar'
+import { CurrentNode } from './WorkflowSidebar'
 
 /**
  * Returns the DOMRect for the React Flow container.

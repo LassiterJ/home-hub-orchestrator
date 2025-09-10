@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { vi } from 'vitest'
 
-import { act } from 'react-dom/test-utils'
+import { act } from "react";
 
 describe('main.tsx', () => {
    it('should call document.getElementById', async () => {

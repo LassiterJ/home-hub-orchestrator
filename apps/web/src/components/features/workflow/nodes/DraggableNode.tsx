@@ -1,7 +1,7 @@
 import { cn } from '@/utils'
 import { type DragEventData, events, position, useCompartment, useDraggable } from '@neodrag/react'
 import { useRef } from 'react'
-import { type handleNodeDragArgs, type handleNodeDropArgs } from '@/components/features/workflow/AppSidebar'
+import { type handleNodeDragArgs, type handleNodeDropArgs } from '@/components/features/workflow/WorkflowSidebar'
 
 
 interface DraggableNodeProps {

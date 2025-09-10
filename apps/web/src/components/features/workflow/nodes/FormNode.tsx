@@ -12,7 +12,7 @@ import { type NodeData } from '@/types'
 import { cn } from '@/utils'
 import { Label } from '@home-hub-orchestrator/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type DragEventData, events, position, useCompartment, useDraggable } from '@neodrag/react'
+import { bounds, BoundsFrom, type DragEventData, events, position, useCompartment, useDraggable } from '@neodrag/react'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
 import { ArrowDown, ArrowUp, Edit, FileText, GripVertical, Info, LucideIcon, Maximize2 } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -133,6 +133,9 @@ function FieldRowEditor({
    }, [index])
 
    const dragEvents = {
+      onDrag: (_e: DragEventData) => {
+
+      },
       onDragEnd: (_e: DragEventData) => {
          const toIndex = computeTargetIndex()
          if (toIndex !== index) {
@@ -144,7 +147,7 @@ function FieldRowEditor({
          }
       },
    }
-   useDraggable(rowRef, () => [positionComp, events(dragEvents)])
+   useDraggable(rowRef, () => [positionComp, events(dragEvents), bounds(BoundsFrom.parent())])
 
    useEffect(() => {
       registerItemRef(index, rowRef.current)
@@ -260,12 +263,13 @@ function FormView<T extends z.ZodTypeAny>(
    })
 
    const populatedFields = useMemo(() => {
+      console.log('fieldsData.map, keys:', fieldsData.map((fd) => fd.id))
       return fieldsData.map((fieldDef) => {
-         const { name, label, placeholder, Control, description } = fieldDef
+         const { id, name, label, placeholder, Control, description } = fieldDef
 
          return (
             <FormField
-               key={name}
+               key={id}
                control={form.control}
                name={name as any}
                render={({ field }) => (
