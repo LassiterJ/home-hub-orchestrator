@@ -61,20 +61,23 @@ function FormView<T extends z.ZodTypeAny>(
    {
       formSchema,
       fieldsData = [],
+      isEditing,
    }: {
       formSchema: T
       fieldsData: Array<FieldForSchema<T>>
+      isEditing: boolean
    },
 ) {
    const form = useForm<z.infer<T>>({
       resolver: zodResolver(formSchema),
-      // If you want explicit defaults, compute them from fieldsData.
+      // TODO: Consider if you want explicit defaults, compute them from fieldsData.
       defaultValues: {} as z.infer<T>,
    })
 
    const populatedFields = useMemo(() => {
       return fieldsData.map((fieldDef) => {
          const { name, label, placeholder, Control, description } = fieldDef
+
          return (
             <FormField
                key={name}
@@ -129,18 +132,7 @@ export function FormNode({ data, selected }: NodeProps<FormNode>) {
    // For now, use an empty schema; replace with your real, generated Zod object later.
    const [formSchema, setFormSchema] = useState<z.ZodTypeAny>(() => z.object({}))
    console.log('FieldsData: ', fieldsData)
-   // const fieldsData = useMemo(() => {
-   //    return [
-   //       {
-   //          name: 'testName',
-   //          label: 'Test Field Label',
-   //          placeholder: 'Test Placeholder',
-   //          Control: Input,
-   //          description: 'test field description',
-   //       },
-   //    ] as Array<FieldForSchema<typeof formSchema>>
-   //    // Note: when you replace the schema with a concrete z.object({...}), update this typing accordingly.
-   // }, [formSchema])
+
 
    // ToggleGroup passes an array of selected values when type="multiple"
    function handleToggleGroupValueChange(values: string[]) {
@@ -189,13 +181,7 @@ export function FormNode({ data, selected }: NodeProps<FormNode>) {
 
             {/* Empty content area for form fields */}
             <BaseNodeContent>
-               {isEditing ? (
-                  // EDIT MODE: render an empty placeholder (for now) to indicate builder canvas
-                  <div className="min-h-[160px] h-full w-full rounded-md bg-muted/40 border border-dashed" />
-               ) : (
-                  // DISPLAY MODE
-                  <FormView formSchema={formSchema} fieldsData={fieldsData as any} />
-               )}
+               <FormView formSchema={formSchema} fieldsData={fieldsData as any} isEditing={isEditing} />
             </BaseNodeContent>
 
             {/* Footer with submit button */}

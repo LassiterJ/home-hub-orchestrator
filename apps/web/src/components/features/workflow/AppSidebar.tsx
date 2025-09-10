@@ -15,10 +15,11 @@ import {
    SidebarRail,
 } from '@/components/ui/Sidebar'
 import { type DragEventData } from '@neodrag/react'
-import { Rect, useReactFlow, type XYPosition } from '@xyflow/react'
+import { useReactFlow, type XYPosition } from '@xyflow/react'
 import { BarChart3, Brain, ChevronRight, FileText, Settings, Table, Text, Upload, Zap } from 'lucide-react'
 import * as React from 'react'
 import { useCallback } from 'react'
+import { buildDragRect, getFlowRect, hasMatchingId, isPointInRect, nextStatusOnDrag } from './utils'
 
 // This is contains sample data.
 const data = {
@@ -145,49 +146,6 @@ const getBadgeClass = (t: string) => {
    if (t === 'output') return 'bg-node-output/20 text-node-output'
    return 'bg-muted text-foreground'
 }
-//
-// // -------- draggable item (ported from NodeSidebar) ---------------------------
-// const DraggableMenuItem: React.FC<{ node: SidebarNode }> = ({ node }) => {
-//    // We attach the draggable ref to a DOM wrapper instead of the function component
-//    // to avoid React's ref warning. The drag handle remains on the button.
-//    const draggableRef = React.useRef<HTMLDivElement>(null)
-//    const [position, setPosition] = useState<XYPosition>({ x: 0, y: 0 })
-//    useDraggable(draggableRef, [
-//       controls({ allow: ControlFrom.selector('.drag-handle') }),
-//       events({
-//          onDragEnd: (event) => {
-//             setPosition({ x: 0, y: 0 })
-//             onDrop(nodeType, {
-//                x: event.clientX,
-//                y: event.clientY,
-//             })
-//          },
-//       }),
-//    ])
-
-//    return (
-//       <SidebarMenuItem>
-//          <SidebarMenuButton
-//             className="drag-handle cursor-grab active:cursor-grabbing py-4"
-//             asChild={false}
-//             aria-label={`Add ${node.label}`}
-//          >
-//             <div ref={draggableRef} className="inline-flex align-middle items-start gap-2 w-full">
-//                <div className={`${getBadgeClass(node.type)} p-1.5 rounded-md`}>
-//                   <node.icon size={16} />
-//                </div>
-//                {/*<div className="flex-1 min-w-0 text-left">*/}
-//                <div className="text-sm font-medium">{node.label}</div>
-//                {/*<div className="text-xs text-muted-foreground line-clamp-2">*/}
-//                {/*   {node.description}*/}
-//                {/*</div>*/}
-//                {/*</div>*/}
-//             </div>
-//          </SidebarMenuButton>
-//       </SidebarMenuItem>
-//    )
-// }
-
 
 /**
  * Behavior change for dragging from menu to canvas
@@ -201,153 +159,183 @@ const getId = () => `dndnode_${id++}` //TODO setup uuid.
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
    const { setNodes, screenToFlowPosition, getIntersectingNodes } = useReactFlow()
 
+   /**
+    * Update node highlight while dragging a palette item over the canvas.
+    * - Early returns when drag is outside the flow area
+    * - Uses helpers to reduce duplication and improve readability
+    */
    const handleNodeDrag = useCallback(({ currentDragNode, screenPosition }: handleNodeDragArgs) => {
-      const flow = document.querySelector('.react-flow')
-      const flowRect = flow?.getBoundingClientRect()
-      const isInFlow =
-         flowRect &&
-         screenPosition.x >= flowRect.left &&
-         screenPosition.x <= flowRect.right &&
-         screenPosition.y >= flowRect.top &&
-         screenPosition.y <= flowRect.bottom
-      //  does node exist
-      if (isInFlow) {
-         const position = screenToFlowPosition(screenPosition)
-         let boundingClientRect = currentDragNode.getBoundingClientRect()
+      const flowRect = getFlowRect()
+      if (!isPointInRect(screenPosition, flowRect)) return
 
-         const rect: Rect = {
-            x: position.x,
-            y: position.y,
-            width: boundingClientRect.width,
-            height: boundingClientRect.height,
+      const position = screenToFlowPosition(screenPosition)
+      const rect = buildDragRect(currentDragNode, position)
+      const intersectingNodes = getIntersectingNodes(rect, true)
+      const formIntersections = intersectingNodes.filter((node) => node.type === 'form') as FormNode[]
+
+
+      // console.debug('drag:formIntersections', { count: formIntersections.length })
+
+      setNodes((ns) =>
+         ns.map((n) => {
+            const intersecting = hasMatchingId(formIntersections, n.id)
+            return {
+               ...n,
+               data: {
+                  ...n.data,
+                  status: nextStatusOnDrag(n?.data?.status, intersecting),
+               },
+            }
+         }),
+      )
+   }, [screenToFlowPosition, getIntersectingNodes, setNodes])
+   /**
+    * On drop:
+    * - If not over the flow area, ignore
+    * - If over empty canvas (no form intersections), create a new node
+    * - If intersecting a Form, append a field config into that form and reset highlight
+    */
+   const handleNodeDrop = useCallback(
+      ({ nodeType, currentDragNode, screenPosition }: handleNodeDropArgs) => {
+         const flowRect = getFlowRect()
+         if (!isPointInRect(screenPosition, flowRect)) return
+
+         const position = screenToFlowPosition(screenPosition)
+         const rect = buildDragRect(currentDragNode, position)
+         const intersectingNodes = getIntersectingNodes(rect, true)
+         const formIntersections = intersectingNodes.filter((node) => node.type === 'form') as FormNode[]
+
+
+         // Empty canvas: create node
+         if (formIntersections.length === 0) {
+            const newNode = {
+               id: getId(), // Prefer crypto.randomUUID() if available
+               type: nodeType,
+               position,
+               data: { label: `${nodeType} node` },
+            }
+            // TODO: logger.info('drop:createNode', { nodeType, position })
+            setNodes((ns) => [...ns, newNode])
+            return
          }
 
-         const intersections = getIntersectingNodes(rect, true)
-         console.log('intersections: ', intersections)
-         const formIntersections: false[] | FormNode[] = intersections.map((node) => node.type === 'form' && node)
-
-         const hasMatchingId = (items: FormNode[], id: string) =>
-            items.some(item => item.id === id)
-
+         // Dropped over a Form: append a field configuration into the target form(s)
          setNodes((ns) =>
             ns.map((n) => {
-               console.log('n: ', n)
-               console.log('n.data.status: ', n?.data.status)
-               const initialStatus = n.data.status
-               const isAlreadyHighlighted = initialStatus === 'intersected'
-               const isMatchingElement = hasMatchingId(formIntersections, n.id)
-               const status = () => {
-                  if (isAlreadyHighlighted && !isMatchingElement) {
-                     return 'default'
-                  }
-                  if (isMatchingElement) {
-                     return 'intersected'
-                  }
-                  return n.data.status
+               if (!hasMatchingId(formIntersections, n.id)) return n
+
+               // Reset highlight back toward neutral after a successful drop
+               const prevStatus = n?.data?.status
+               const status = prevStatus === 'intersected' ? 'initial' : prevStatus
+
+               // Resolve the form control for the palette node type
+               const Control = formNodeFormControlMap[nodeType]
+               if (!Control) {
+                  // TODO: replace with Winston logger
+                  // logger.warn('drop:unknownControl', { nodeType })
                }
 
+               const newField = {
+                  name: 'default',
+                  label: 'default',
+                  placeholder: 'placeholder',
+                  Control,
+                  description: ' test description',
+               }
+
+               const fieldsData = Array.isArray(n?.data?.fieldsData) ? n.data.fieldsData : []
                return {
                   ...n,
                   data: {
-                     ...(n.data),
-                     status: status(),
+                     ...n.data,
+                     status,
+                     fieldsData: [...fieldsData, newField],
                   },
                }
             }),
          )
-      }
-   }, [])
-   // const getStatus = ({ initialStatus, formIntersections, matchId, node }) => {
-   //    const isAlreadyHighlighted = initialStatus === 'intersected'
-   //    const isMatchingElement = hasMatchingId(formIntersections, matchId)
-   //
-   //    if (isAlreadyHighlighted && !isMatchingElement) {
-   //       return 'default'
-   //    }
-   //    if (isMatchingElement) {
-   //       return 'intersected'
-   //    }
-   //    return node.data.status
-   // }
-   const handleNodeDrop = useCallback(
-      ({ nodeType, currentDragNode, screenPosition }: handleNodeDropArgs) => {
-         const flow = document.querySelector('.react-flow')
-         const flowRect = flow?.getBoundingClientRect()
-         const isInFlow =
-            flowRect &&
-            screenPosition.x >= flowRect.left &&
-            screenPosition.x <= flowRect.right &&
-            screenPosition.y >= flowRect.top &&
-            screenPosition.y <= flowRect.bottom
-
-         const position = screenToFlowPosition(screenPosition)
-
-         const newNode = {
-            id: getId(),
-            type: nodeType,
-            position,
-            data: { label: `${nodeType} node` },
-         }
-         // Create a new node and add it to the flow
-         if (isInFlow) {
-
-
-            // Is dropped on form?
-            let boundingClientRect = currentDragNode.getBoundingClientRect()
-
-            const rect: Rect = {
-               x: position.x,
-               y: position.y,
-               width: boundingClientRect.width,
-               height: boundingClientRect.height,
-            }
-
-            const intersections = getIntersectingNodes(rect, true)
-            const formIntersections: false | FormNode[] = intersections.map((node) => node.type === 'form' && node)
-            const hasMatchingId = (items: FormNode[], id: string) =>
-               items.some(item => item.id === id)
-            if (!formIntersections || formIntersections.length < 1) {
-               setNodes((ns) => [...ns, newNode])
-               return
-            }
-            setNodes((ns) =>
-               ns.map((n) => {
-                  if (!hasMatchingId(formIntersections, n.id)) {
-                     return n
-                  }
-
-                  const getStatus = ({ prevStatus = 'initial' }) => {
-                     const isAlreadyHighlighted = prevStatus === 'intersected'
-                     return isAlreadyHighlighted ? 'initial' : prevStatus
-                  }
-                  const status = getStatus({ prevStatus: n?.data?.status })
-                  console.log('nodeType: ', nodeType)
-                  console.log('formNodeMap: ', formNodeFormControlMap[`${nodeType}`])
-                  const newField = {
-                     name: 'default',
-                     label: 'default',
-                     placeholder: 'placeholder',
-                     Control: formNodeFormControlMap[nodeType],
-                     description: ' test description',
-                  }
-                  const tempFieldsData = n?.data?.fieldsData || []
-                  return {
-                     ...n,
-                     data: {
-                        ...n.data,
-                        status: status,
-                        fieldsData: [...tempFieldsData, newField],
-                     },
-                  }
-               }),
-            )
-
-         }
-
-
       },
-      [setNodes, screenToFlowPosition],
+      [screenToFlowPosition, getIntersectingNodes, setNodes],
    )
+   // const handleNodeDrop = useCallback(
+   //    ({ nodeType, currentDragNode, screenPosition }: handleNodeDropArgs) => {
+   //       const flow = document.querySelector('.react-flow')
+   //       const flowRect = flow?.getBoundingClientRect()
+   //       const isInFlow =
+   //          flowRect &&
+   //          screenPosition.x >= flowRect.left &&
+   //          screenPosition.x <= flowRect.right &&
+   //          screenPosition.y >= flowRect.top &&
+   //          screenPosition.y <= flowRect.bottom
+   //
+   //       const position = screenToFlowPosition(screenPosition)
+   //
+   //       const newNode = {
+   //          id: getId(),
+   //          type: nodeType,
+   //          position,
+   //          data: { label: `${nodeType} node` },
+   //       }
+   //       // Create a new node and add it to the flow
+   //       if (isInFlow) {
+   //
+   //
+   //          // Is dropped on form?
+   //          let boundingClientRect = currentDragNode.getBoundingClientRect()
+   //
+   //          const rect: Rect = {
+   //             x: position.x,
+   //             y: position.y,
+   //             width: boundingClientRect.width,
+   //             height: boundingClientRect.height,
+   //          }
+   //
+   //          const intersections = getIntersectingNodes(rect, true)
+   //          const formIntersections: false | FormNode[] = intersections.map((node) => node.type === 'form' && node)
+   //          const hasMatchingId = (items: FormNode[], id: string) =>
+   //             items.some(item => item.id === id)
+   //          if (!formIntersections || formIntersections.length < 1) {
+   //             setNodes((ns) => [...ns, newNode])
+   //             return
+   //          }
+   //          setNodes((ns) =>
+   //             ns.map((n) => {
+   //                if (!hasMatchingId(formIntersections, n.id)) {
+   //                   return n
+   //                }
+   //
+   //                const getStatus = ({ prevStatus = 'initial' }) => {
+   //                   const isAlreadyHighlighted = prevStatus === 'intersected'
+   //                   return isAlreadyHighlighted ? 'initial' : prevStatus
+   //                }
+   //                const status = getStatus({ prevStatus: n?.data?.status })
+   //                console.log('nodeType: ', nodeType)
+   //                console.log('formNodeMap: ', formNodeFormControlMap[`${nodeType}`])
+   //                const newField = {
+   //                   name: 'default',
+   //                   label: 'default',
+   //                   placeholder: 'placeholder',
+   //                   Control: formNodeFormControlMap[nodeType],
+   //                   description: ' test description',
+   //                }
+   //                const tempFieldsData = n?.data?.fieldsData || []
+   //                return {
+   //                   ...n,
+   //                   data: {
+   //                      ...n.data,
+   //                      status: status,
+   //                      fieldsData: [...tempFieldsData, newField],
+   //                   },
+   //                }
+   //             }),
+   //          )
+   //
+   //       }
+   //
+   //
+   //    },
+   //    [setNodes, screenToFlowPosition],
+   // )
    return (
       <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
          <SidebarHeader>
