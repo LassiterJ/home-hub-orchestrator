@@ -7,7 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/ToggleGroup'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip'
 import { Label } from '@home-hub-orchestrator/ui'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
-import { ArrowDown, ArrowUp, Edit, FileText, GripVertical, Info, Maximize2 } from 'lucide-react'
+import { Edit, FileText, GripVertical, Info, Maximize2 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -16,14 +16,14 @@ import { BaseNode, BaseNodeContent, BaseNodeFooter, BaseNodeHeader, BaseNodeHead
 /**
  * FormNodeV2
  *
- * - A variant of the FileNode that uses the new child-composed `List` from ReorderableList
+ * - A variant of the FormNode that uses the new child-composed `List` from ReorderableList
  *   to reorder form fields when `isEditing` is true.
  * - View mode renders a simple form driven by `fieldsData` for demonstration.
- * - No changes are made to the existing FileNode; this is a parallel implementation.
+ * - No changes are made to the existing FormNode; this is a parallel implementation.
  */
 
 // Data passed via React Flow node data
-type FileNodeData = {
+type FormNodeData = {
    label: string
    description?: string
    icon?: any
@@ -32,9 +32,9 @@ type FileNodeData = {
    /** When true, shows field editor with drag-to-reorder */
    isEditing?: boolean
    /** Array of field definitions rendered and edited by this node */
-   fieldsData: FieldForSchema<z.ZodTypeAny>[]
+   fieldsData?: FieldForSchema<z.ZodTypeAny>[]
 }
-export type FormNodeV2 = Node<FileNodeData, 'file-v2'>
+export type FormNodeV2 = Node<FormNodeData, 'form-v2'>
 
 /** Field definition generic over a Zod schema */
 type FieldForSchema<T extends z.ZodTypeAny> = {
@@ -50,11 +50,11 @@ type FieldForSchema<T extends z.ZodTypeAny> = {
  * View-only rendering of fields as a form (minimal demo).
  */
 function FieldsView<T extends z.ZodTypeAny>({ fieldsData, formSchema: _formSchema }: {
-   fieldsData: Array<FieldForSchema<T>>;
+   fieldsData?: Array<FieldForSchema<T>>;
    formSchema: T
 }) {
    const form = useForm<z.infer<T>>({ defaultValues: {} as z.infer<T> })
-   const populated = useMemo(() => fieldsData.map((def) => {
+   const populated = useMemo(() => (fieldsData ?? []).map((def) => {
       const { id, name, label, placeholder, Control, description } = def
       return (
          <FormField key={id} control={form.control} name={name as any} render={({ field }) => (
@@ -93,20 +93,12 @@ function FieldRowEditor<T extends z.ZodTypeAny>({
    onChange: (index: number, patch: Partial<FieldForSchema<T>>) => void
 }) {
    return (
-      <div className="flex items-start gap-2 py-2 border-b last:border-b-0">
+      <div className="inline-flex items-start gap-2 py-2 border-b last:border-b-0">
          {/* Drag handle + keyboard fallback controls */}
          <div className="flex items-center gap-1 pt-2 select-none">
             <List.Handle>
                <GripVertical className="h-4 w-4 text-muted-foreground" />
             </List.Handle>
-            <button type="button" aria-label="Move up" className="text-muted-foreground hover:text-foreground"
-                    onClick={() => onChange(index, {}) /* parent will handle array move via keyboard elsewhere if desired */}>
-               <ArrowUp className="h-3 w-3" />
-            </button>
-            <button type="button" aria-label="Move down" className="text-muted-foreground hover:text-foreground"
-                    onClick={() => onChange(index, {})}>
-               <ArrowDown className="h-3 w-3" />
-            </button>
          </div>
 
          {/* Editable inputs: name, label, description */}
@@ -166,8 +158,9 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
    const handleFieldChange = useCallback((index: number, patch: Partial<FieldForSchema<z.ZodTypeAny>>) => {
       setNodes((ns) => ns.map((n) => {
          if (n.id !== id) return n
-         const prev = (n.data as any).fieldsData as FieldForSchema<z.ZodTypeAny>[]
+         const prev = ((n.data as any).fieldsData as FieldForSchema<z.ZodTypeAny>[] | undefined) ?? []
          const next = prev.slice()
+         if (!next[index]) return n
          next[index] = { ...next[index], ...patch }
          return { ...n, data: { ...n.data, fieldsData: next } }
       }))
@@ -214,12 +207,12 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
                 * - onReorder updates node data
                 */
                <List
-                  items={fieldsData as any}
+                  items={(fieldsData ?? []) as any}
                   getId={(f: FieldForSchema<z.ZodTypeAny>) => f.id}
                   onReorder={handleReorder as any}
                   listClassName="flex flex-col gap-2"
                >
-                  {(fieldsData as any).map((field: FieldForSchema<z.ZodTypeAny>, index: number) => (
+                  {((fieldsData ?? []) as any).map((field: FieldForSchema<z.ZodTypeAny>, index: number) => (
                      <List.Item key={field.id} id={field.id} value={field} asChild>
                         <div className="rounded border p-2">
                            <FieldRowEditor index={index} field={field} onChange={handleFieldChange as any} />
@@ -228,7 +221,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
                   ))}
                </List>
             ) : (
-               <FieldsView fieldsData={fieldsData as any} formSchema={formSchema as any} />
+               <FieldsView fieldsData={(fieldsData ?? []) as any} formSchema={formSchema as any} />
             )}
          </BaseNodeContent>
 
