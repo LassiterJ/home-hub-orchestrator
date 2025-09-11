@@ -1,6 +1,5 @@
 import { FormNode } from '@/components/features/workflow/nodes'
 import { DraggableNode } from '@/components/features/workflow/nodes/DraggableNode'
-import { FormControlRendererKey, formNodeFormControlMap } from '@/components/features/workflow/WorkflowBuilder'
 import { SearchForm } from '@/components/shared/SearchForm'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
 import {
@@ -16,11 +15,12 @@ import {
 } from '@/components/ui/Sidebar'
 import { type DragEventData } from '@neodrag/react'
 import { useReactFlow, type XYPosition } from '@xyflow/react'
-import { BarChart3, Brain, ChevronRight, FileText, Settings, Table, Text, Upload, Zap } from 'lucide-react'
+import { BarChart3, Brain, ChevronRight, FileText, List, Settings, Table, Text, Upload, Zap } from 'lucide-react'
 import * as React from 'react'
 import { useCallback } from 'react'
 import { buildDragRect, getFlowRect, hasMatchingId, isPointInRect, nextStatusOnDrag } from './utils'
 import { getNewUUID } from '@/utils'
+import { FormControlRendererKey, formNodeFormControlMap } from '@/components/features/workflow/nodeTypes'
 
 // This is contains sample data.
 const data = {
@@ -76,18 +76,6 @@ const data = {
                icon: Brain,
                description: 'Detect objects in images',
             },
-            {
-               type: 'model',
-               label: 'Classification',
-               icon: Brain,
-               description: 'Classify images or objects',
-            },
-            {
-               type: 'model',
-               label: 'Segmentation',
-               icon: Brain,
-               description: 'Segment objects or regions',
-            },
          ],
       },
       {
@@ -98,18 +86,6 @@ const data = {
                label: 'Filter',
                icon: Settings,
                description: 'Filter detections by criteria',
-            },
-            {
-               type: 'processing',
-               label: 'Transform',
-               icon: Zap,
-               description: 'Transform image coordinates',
-            },
-            {
-               type: 'processing',
-               label: 'Augment',
-               icon: Settings,
-               description: 'Apply data augmentations',
             },
          ],
       },
@@ -122,6 +98,18 @@ const data = {
                icon: Table,
                description: 'A convenient node for documenting schemas',
             },
+            {
+               type: 'list',
+               label: 'ReorderDemoNode',
+               icon: List,
+               description: 'A node to test drag and drop list items ',
+            },
+            // {
+            //    type: 'list',
+            //    label: 'ReorderDemoNode',
+            //    icon: List,
+            //    description: 'A node to test drag and drop list items ',
+            // },
          ],
       },
    ],

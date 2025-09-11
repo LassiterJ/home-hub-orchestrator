@@ -5,7 +5,6 @@ import {
    Connection,
    Controls,
    MiniMap,
-   NodeTypes,
    ReactFlow,
    ReactFlowProvider,
    useEdgesState,
@@ -15,27 +14,12 @@ import '@xyflow/react/dist/style.css'
 import React, { useCallback } from 'react'
 
 import { WorkflowSidebar } from '@/components/features/workflow/WorkflowSidebar'
-import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
 import { SiteHeader } from '@/components/shared/PageHeader'
 import { MenuItemSpec } from '@/components/ui/ContextMenu'
 import { SidebarInset, SidebarProvider } from '@/components/ui/Sidebar'
-import { FormNode, ModelNode, OutputNode, ProcessingNode } from './nodes'
-import { TextInputNode } from './nodes/form/TextInputNode'
 import { sampleEdges, sampleNodes } from '@/components/features/workflow/sampleWorkflow'
-import { Input } from '@/components/ui/Input'
+import { nodeTypes } from '@/components/features/workflow/nodeTypes'
 
-export const nodeTypes: NodeTypes = {
-   input: TextInputNode,
-   model: ModelNode,
-   processing: ProcessingNode,
-   output: OutputNode,
-   schema: DatabaseSchemaDemo,
-   form: FormNode,
-}
-export type FormControlRendererKey = keyof typeof formNodeFormControlMap
-export const formNodeFormControlMap = {
-   input: Input,
-}
 
 type MenuPosition = {
    top?: number
