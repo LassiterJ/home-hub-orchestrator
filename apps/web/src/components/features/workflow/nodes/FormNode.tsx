@@ -1,7 +1,6 @@
 'use client'
 
 import { BaseHandle } from '@/components/features/workflow/handles/BaseHandle'
-import { GroupNode, type GroupNodeProps } from '@/components/features/workflow/nodes/GroupNode'
 import { NodeStatus } from '@/components/features/workflow/NodeStatusIndicator'
 import { Button } from '@/components/ui/Button/'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
@@ -15,17 +14,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { bounds, BoundsFrom, type DragEventData, events, position, useCompartment, useDraggable } from '@neodrag/react'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
 import { ArrowDown, ArrowUp, Edit, FileText, GripVertical, Info, LucideIcon, Maximize2 } from 'lucide-react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { BaseNode, BaseNodeContent, BaseNodeFooter, BaseNodeHeader, BaseNodeHeaderTitle } from './BaseNode'
 
-/**
- * Notes:
- * The form node supports an "edit" mode which changes the view to have the window panes and the form display
- * node changes to this group node containing individual input nodes.
- * */
-export const EditFormView = memo((props: GroupNodeProps) => <GroupNode {...props} />)
 
 /**
  * FormNode component for workflow forms
@@ -87,12 +80,12 @@ function arrayMoveImmutable<T>(items: readonly T[], fromIndex: number, toIndex: 
  * vertically, along with inline inputs for name, label, and description.
  */
 function FieldRowEditor({
-   index,
-   field,
-   registerItemRef,
-   requestMove,
-   requestUpdate,
-}: {
+                           index,
+                           field,
+                           registerItemRef,
+                           requestMove,
+                           requestUpdate,
+                        }: {
    index: number
    field: FieldForSchema<any>
    registerItemRef: (index: number, el: HTMLDivElement | null) => void
@@ -157,18 +150,18 @@ function FieldRowEditor({
 
    return (
       <div ref={rowRef}
-         className="flex items-start gap-2 py-2 border-b last:border-b-0" data-index={index}>
+           className="flex items-start gap-2 py-2 border-b last:border-b-0" data-index={index}>
          {/* Drag handle + keyboard fallback controls */}
          <div className="flex items-center gap-1 pt-2 select-none">
             <GripVertical className="h-4 w-4 text-muted-foreground" />
             <button type="button" aria-label="Move up"
-               className="text-muted-foreground hover:text-foreground"
-               onClick={() => requestMove(index, Math.max(0, index - 1))}>
+                    className="text-muted-foreground hover:text-foreground"
+                    onClick={() => requestMove(index, Math.max(0, index - 1))}>
                <ArrowUp className="h-3 w-3" />
             </button>
             <button type="button" aria-label="Move down"
-               className="text-muted-foreground hover:text-foreground"
-               onClick={() => requestMove(index, index + 1)}>
+                    className="text-muted-foreground hover:text-foreground"
+                    onClick={() => requestMove(index, index + 1)}>
                <ArrowDown className="h-3 w-3" />
             </button>
          </div>
@@ -178,20 +171,20 @@ function FieldRowEditor({
             <div>
                <Label>Name</Label>
                <Input value={field.name}
-                  onChange={(e) => requestUpdate(index, { name: e.target.value as any })}
-                  placeholder="field_name" />
+                      onChange={(e) => requestUpdate(index, { name: e.target.value as any })}
+                      placeholder="field_name" />
             </div>
             <div>
                <Label>Label</Label>
                <Input value={field.label}
-                  onChange={(e) => requestUpdate(index, { label: e.target.value })}
-                  placeholder="Label" />
+                      onChange={(e) => requestUpdate(index, { label: e.target.value })}
+                      placeholder="Label" />
             </div>
             <div>
                <Label>Description</Label>
                <Input value={field.description ?? ''}
-                  onChange={(e) => requestUpdate(index, { description: e.target.value })}
-                  placeholder="Add a helpful description" />
+                      onChange={(e) => requestUpdate(index, { description: e.target.value })}
+                      placeholder="Add a helpful description" />
             </div>
          </div>
       </div>
@@ -206,9 +199,9 @@ function FieldRowEditor({
  * propagated via the provided onChange callback.
  */
 function FieldsEditor({
-   fields,
-   onChange,
-}: {
+                         fields,
+                         onChange,
+                      }: {
    fields: FieldForSchema<any>[]
    onChange: (next: FieldForSchema<any>[]) => void
 }) {
@@ -347,8 +340,8 @@ export function FormNode({ id, data, selected }: NodeProps<FormNode>) {
       <>
          <NodeToolbar isVisible={selected}>
             <ToggleGroup aria-label="Toggle node editing and resizing modes"
-               onValueChange={handleToggleGroupValueChange} variant="default" type="multiple"
-               className="gap-1">
+                         onValueChange={handleToggleGroupValueChange} variant="default" type="multiple"
+                         className="gap-1">
                <ToggleGroupItem value="resize" aria-label="Resize node">
                   <Maximize2 className="h-4 w-4" />
                </ToggleGroupItem>

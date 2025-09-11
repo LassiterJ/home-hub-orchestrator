@@ -1,8 +1,8 @@
 import { NodeTypes } from '@xyflow/react'
-import { FormNode, ModelNode, OutputNode, ProcessingNode, TextInputNode } from '@/components/features/workflow/nodes'
+import { ModelNode, OutputNode, ProcessingNode, TextInputNode } from '@/components/features/workflow/nodes'
 import DatabaseSchemaDemo from '@/components/features/workflow/nodes/documentation/DatabaseSchemaNode'
 import { Input } from '@/components/ui/Input'
-import { ReorderDemoNode2 } from '@/components/features/workflow/nodes/ReorderDemo2'
+import { FormNodeV2 } from '@/components/features/workflow/nodes/FormNodeV2'
 
 export const nodeTypes: NodeTypes = {
    input: TextInputNode,
@@ -10,8 +10,7 @@ export const nodeTypes: NodeTypes = {
    processing: ProcessingNode,
    output: OutputNode,
    schema: DatabaseSchemaDemo,
-   form: FormNode,
-   list: ReorderDemoNode2,
+   form: FormNodeV2,
 }
 export const formNodeFormControlMap = {
    input: Input,

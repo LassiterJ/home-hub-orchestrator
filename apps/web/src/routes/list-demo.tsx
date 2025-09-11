@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { List } from '@/components/ui/List'
+import { tasks } from '../components/ui/List/taskData'
 
 export const Route = createFileRoute('/list-demo')({
    component: ListTest,
@@ -13,11 +14,12 @@ const listItems = [
    { key: 'item5', label: 'Item5' },
 ]
 
+
 function ListTest() {
    return (
       <div className="h-screen w-screen">
          <div className={'container w-[500px] h-[400px] border'}>
-            <List listItems={listItems} />
+            <List tasksRaw={tasks} />
          </div>
       </div>
    )

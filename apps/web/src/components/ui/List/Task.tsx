@@ -13,7 +13,6 @@ import {
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { DropIndicator } from './DropIndicator'
 import { getTaskData, isTaskData, type TTask } from './taskData'
-import { Status } from './Status'
 
 type TaskState =
    | {
@@ -129,7 +128,7 @@ export function Task({ task }: { task: TTask }) {
                   <GripVertical size={10} />
                </div>
                <span className="truncate grow shrink">{task.content}</span>
-               <Status status={task.status} />
+               {/*<Status status={task.status} />*/}
             </div>
             {state.type === 'is-dragging-over' && state.closestEdge ? (
                <DropIndicator edge={state.closestEdge} gap={'8px'} />

@@ -13,7 +13,7 @@ export function isTaskData(data: Record<string | symbol, unknown>): data is TTas
    return data[taskDataKey] === true
 }
 
-const tasks: TTask[] = [
+export const tasks: TTask[] = [
    { id: 'task-0', content: 'Organize a team-building event', status: 'todo' },
    { id: 'task-1', content: 'Create and maintain office inventory', status: 'in-progress' },
    { id: 'task-2', content: 'Update company website content', status: 'done' },

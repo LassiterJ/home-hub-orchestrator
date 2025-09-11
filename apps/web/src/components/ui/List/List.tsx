@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getTasks, isTaskData, type TTask } from './taskData'
+import { isTaskData, type TTask } from './taskData'
 import { Task } from './Task'
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
@@ -7,8 +7,13 @@ import { reorderWithEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/r
 import { triggerPostMoveFlash } from '@atlaskit/pragmatic-drag-and-drop-flourish/trigger-post-move-flash'
 import { flushSync } from 'react-dom'
 
-export function List() {
-   const [tasks, setTasks] = useState<TTask[]>(() => getTasks())
+
+interface ListProps {
+   tasksRaw: TTask[]
+}
+
+export function List({ tasksRaw }: ListProps) {
+   const [tasks, setTasks] = useState<TTask[]>(tasksRaw)
 
    useEffect(() => {
       return monitorForElements({
@@ -50,7 +55,7 @@ export function List() {
                )
             })
             // Being simple and just querying for the task after the drop.
-            // We could use react context to register the element in a lookup,
+            // TODO: We could use react context to register the element in a lookup,
             // and then we could retrieve that element after the drop and use
             // `triggerPostMoveFlash`. But this gets the job done.
             const element = document.querySelector(`[data-task-id="${sourceData.taskId}"]`)
