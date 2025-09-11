@@ -50,10 +50,10 @@ export type PageTemplateProps = {
 }
 
 const widthMap: Record<NonNullable<PageTemplateProps['maxWidth']>, string> = {
-   sm: 'max-w-screen-sm',
-   md: 'max-w-screen-md',
-   lg: 'max-w-screen-lg',
-   xl: 'max-w-screen-xl',
+   sm: 'max-w-(--breakpoint-sm)',
+   md: 'max-w-(--breakpoint-md)',
+   lg: 'max-w-(--breakpoint-lg)',
+   xl: 'max-w-(--breakpoint-xl)',
    full: 'max-w-none',
 }
 
@@ -82,7 +82,7 @@ export function PageTemplate({
          {(title || description || actions) && (
             <header
                className={cn(
-                  'sticky top-0 z-10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+                  'sticky top-0 z-10 bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60',
                   'border-b',
                   headerClassName,
                )}

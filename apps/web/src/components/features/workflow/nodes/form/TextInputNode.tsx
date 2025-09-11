@@ -54,12 +54,12 @@ export const TextInputNode = memo((props: NodeProps<TextInputNode>) => {
          <BaseHandle
             type="target"
             position={Position.Left}
-            className=" !bg-node-input !border-2 !border-white"
+            className=" !bg-node-input border-2! border-white!"
          />
          <BaseHandle
             type="source"
             position={Position.Right}
-            className="!bg-node-input !border-2 !border-white"
+            className="!bg-node-input border-2! border-white!"
          />
       </BaseNode>
    )

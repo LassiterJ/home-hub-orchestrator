@@ -12,16 +12,16 @@ const edgeToOrientationMap: Record<Edge, Orientation> = {
 
 const orientationStyles: Record<Orientation, HTMLAttributes<HTMLElement>['className']> = {
    horizontal:
-      'h-[--line-thickness] left-[--terminal-radius] right-0 before:left-[--negative-terminal-size]',
+      'h-(--line-thickness) left-(--terminal-radius) right-0 before:left-(--negative-terminal-size)',
    vertical:
-      'w-[--line-thickness] top-[--terminal-radius] bottom-0 before:top-[--negative-terminal-size]',
+      'w-(--line-thickness) top-(--terminal-radius) bottom-0 before:top-(--negative-terminal-size)',
 }
 
 const edgeStyles: Record<Edge, HTMLAttributes<HTMLElement>['className']> = {
-   top: 'top-[--line-offset] before:top-[--offset-terminal]',
-   right: 'right-[--line-offset] before:right-[--offset-terminal]',
-   bottom: 'bottom-[--line-offset] before:bottom-[--offset-terminal]',
-   left: 'left-[--line-offset] before:left-[--offset-terminal]',
+   top: 'top-(--line-offset) before:top-(--offset-terminal)',
+   right: 'right-(--line-offset) before:right-(--offset-terminal)',
+   bottom: 'bottom-(--line-offset) before:bottom-(--offset-terminal)',
+   left: 'left-(--line-offset) before:left-(--offset-terminal)',
 }
 
 const strokeSize = 2
@@ -48,7 +48,7 @@ export function DropIndicator({ edge, gap }: { edge: Edge; gap: string }) {
                '--offset-terminal': `${offsetToAlignTerminalWithLine}px`,
             } as CSSProperties
          }
-         className={`absolute z-10 bg-blue-700 pointer-events-none before:content-[''] before:w-[--terminal-size] before:h-[--terminal-size] box-border before:absolute before:border-[length:--line-thickness] before:border-solid before:border-blue-700 before:rounded-full ${orientationStyles[orientation]} ${[edgeStyles[edge]]}`}
+         className={`absolute z-10 bg-blue-700 pointer-events-none before:content-[''] before:w-(--terminal-size) before:h-(--terminal-size) box-border before:absolute before:border-(length:--line-thickness) before:border-solid before:border-blue-700 before:rounded-full ${orientationStyles[orientation]} ${[edgeStyles[edge]]}`}
       ></div>
    )
 }

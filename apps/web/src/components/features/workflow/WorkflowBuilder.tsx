@@ -67,9 +67,9 @@ export const WorkflowBuilder = () => {
                         >
 
 
-                           <Controls className="!bottom-4 !left-4" />
+                           <Controls className="bottom-4! left-4!" />
                            <MiniMap
-                              className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
+                              className="bottom-4! right-4! w-48! h-32! border border-border rounded-lg shadow-lg"
                               nodeColor={(node) => {
                                  switch (node.type) {
                                     case 'input':
@@ -122,9 +122,9 @@ export const WorkflowBuilder = () => {
       //                   >
       //
       //
-      //                      <Controls className="!bottom-4 !left-4" />
+      //                      <Controls className="bottom-4! left-4!" />
       //                      <MiniMap
-      //                         className="!bottom-4 !right-4 !w-48 !h-32 border border-border rounded-lg shadow-lg"
+      //                         className="bottom-4! right-4! w-48! h-32! border border-border rounded-lg shadow-lg"
       //                         nodeColor={(node) => {
       //                            switch (node.type) {
       //                               case 'input':

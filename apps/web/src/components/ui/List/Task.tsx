@@ -128,7 +128,7 @@ export function Task({ task }: { task: TTask }) {
                <div className="w-6 flex justify-center">
                   <GripVertical size={10} />
                </div>
-               <span className="truncate flex-grow flex-shrink">{task.content}</span>
+               <span className="truncate grow shrink">{task.content}</span>
                <Status status={task.status} />
             </div>
             {state.type === 'is-dragging-over' && state.closestEdge ? (

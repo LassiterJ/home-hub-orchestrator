@@ -21,12 +21,12 @@ const ProcessingNode = memo(({ data }: NodeProps & { data: NodeData }) => {
          <Handle
             type="target"
             position={Position.Left}
-            className="!w-2 !h-2 !bg-node-processing !border-2 !border-white"
+            className="w-2! h-2! !bg-node-processing border-2! border-white!"
          />
          <Handle
             type="source"
             position={Position.Right}
-            className="!w-2 !h-2 !bg-node-processing !border-2 !border-white"
+            className="w-2! h-2! !bg-node-processing border-2! border-white!"
          />
       </div>
    );
