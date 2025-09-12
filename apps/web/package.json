@@ -65,11 +65,11 @@
     "react-day-picker": "^9.9.0",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.48.2",
-    "react-query": "^3.39.3",
     "sonner": "^1.2.4",
     "tailwind-merge": "^3.3.1",
     "tiny-invariant": "^1.3.3",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@home-hub-orchestrator/eslint-config": "workspace:*",

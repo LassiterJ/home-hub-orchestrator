@@ -1,24 +1,21 @@
 import {
-   addEdge,
    Background,
    BackgroundVariant,
-   Connection,
    Controls,
    MiniMap,
    ReactFlow,
    ReactFlowProvider,
-   useEdgesState,
-   useNodesState,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import React, { useCallback } from 'react'
+import { useEffect } from 'react'
 
+import { nodeTypes } from '@/components/features/workflow/nodeTypes'
+import { sampleEdges, sampleNodes } from '@/components/features/workflow/sampleWorkflow'
 import { WorkflowSidebar } from '@/components/features/workflow/WorkflowSidebar'
 import { SiteHeader } from '@/components/shared/PageHeader'
 import { MenuItemSpec } from '@/components/ui/ContextMenu'
 import { SidebarInset, SidebarProvider } from '@/components/ui/Sidebar'
-import { sampleEdges, sampleNodes } from '@/components/features/workflow/sampleWorkflow'
-import { nodeTypes } from '@/components/features/workflow/nodeTypes'
+import { useWorkflowRFStore } from '@/stores/workflowRF.store'
 
 
 type MenuPosition = {
@@ -34,14 +31,23 @@ export type Menu = MenuPosition & {
 }
 
 export const WorkflowBuilder = () => {
+   // Select controlled graph state + handlers from the store
+   const nodes = useWorkflowRFStore((s) => s.nodes)
+   const edges = useWorkflowRFStore((s) => s.edges)
+   const onNodesChange = useWorkflowRFStore((s) => s.onNodesChange)
+   const onEdgesChange = useWorkflowRFStore((s) => s.onEdgesChange)
+   const onConnect = useWorkflowRFStore((s) => s.onConnect)
+   const setNodes = useWorkflowRFStore((s) => s.setNodes)
+   const setEdges = useWorkflowRFStore((s) => s.setEdges)
 
-   const [nodes, _, onNodesChange] = useNodesState(sampleNodes)
-   const [edges, setEdges, onEdgesChange] = useEdgesState(sampleEdges)
-
-   const onConnect = useCallback(
-      (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-      [],
-   )
+   // Initialize with sample graph once
+   useEffect(() => {
+      if (nodes.length === 0 && edges.length === 0) {
+         setNodes(sampleNodes)
+         setEdges(sampleEdges)
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [])
 
    return (
       <div className="[--header-height:calc(--spacing(14))]">

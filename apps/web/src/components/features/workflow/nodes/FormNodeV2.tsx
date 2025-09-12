@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input'
 import { List } from '@/components/ui/List/ReorderableList'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/ToggleGroup'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip'
+import { useWorkflowRFStore } from '@/stores/workflowRF.store'
 import { Label } from '@home-hub-orchestrator/ui'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
 import { Edit, FileText, GripVertical, Info, Maximize2 } from 'lucide-react'
@@ -88,11 +89,11 @@ function FieldsView<T extends z.ZodTypeAny>({ fieldsData, formSchema: _formSchem
  * - Includes a drag handle and simple inputs for name/label/description.
  */
 function FieldRowEditor<T extends z.ZodTypeAny>({
-                                                   index,
-                                                   field,
-                                                   onChange,
-                                                   onFieldSelect,
-                                                }: {
+   index,
+   field,
+   onChange,
+   onFieldSelect,
+}: {
    index: number
    field: FieldForSchema<T>
    onChange: (index: number, patch: Partial<FieldForSchema<T>>) => void
@@ -116,20 +117,20 @@ function FieldRowEditor<T extends z.ZodTypeAny>({
             <div>
                <Label>Name</Label>
                <Input value={field.name}
-                      onChange={(e) => onChange(index, { name: e.target.value as any })}
-                      placeholder="field_name" />
+                  onChange={(e) => onChange(index, { name: e.target.value as any })}
+                  placeholder="field_name" />
             </div>
             <div>
                <Label>Label</Label>
                <Input value={field.label}
-                      onChange={(e) => onChange(index, { label: e.target.value })}
-                      placeholder="Label" />
+                  onChange={(e) => onChange(index, { label: e.target.value })}
+                  placeholder="Label" />
             </div>
             <div>
                <Label>Description</Label>
                <Input value={field.description ?? ''}
-                      onChange={(e) => onChange(index, { description: e.target.value })}
-                      placeholder="Add a helpful description" />
+                  onChange={(e) => onChange(index, { description: e.target.value })}
+                  placeholder="Add a helpful description" />
             </div>
          </div>
       </div>
@@ -147,6 +148,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
    } = data
 
    const { setNodes } = useReactFlow()
+   const updateNodeData = useWorkflowRFStore((s) => s.updateNodeData)
    const [formSchema] = useState<z.ZodTypeAny>(() => z.object({}))
    const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null)
    const Icon = icon
@@ -161,34 +163,30 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
 
    /** Reorder handler for List (controlled mode) */
    const handleReorder = useCallback((next: FieldForSchema<z.ZodTypeAny>[]) => {
-      setNodes((ns) => ns.map((n) => n.id === id ? ({ ...n, data: { ...n.data, fieldsData: next } }) : n))
-   }, [id, setNodes])
+      updateNodeData(id, (d: any) => ({ ...d, fieldsData: next }))
+   }, [id, updateNodeData])
 
    /** Edit handler for inline field changes */
    const handleFieldChange = useCallback((index: number, patch: Partial<FieldForSchema<z.ZodTypeAny>>) => {
-      setNodes((ns) => ns.map((n) => {
-         if (n.id !== id) return n
-         const prev = ((n.data as any).fieldsData as FieldForSchema<z.ZodTypeAny>[] | undefined) ?? []
+      updateNodeData(id, (d: any) => {
+         const prev = (d.fieldsData as FieldForSchema<z.ZodTypeAny>[] | undefined) ?? []
          const next = prev.slice()
-         if (!next[index]) return n
+         if (!next[index]) return d
          next[index] = { ...next[index], ...patch }
-         return { ...n, data: { ...n.data, fieldsData: next } }
-      }))
-   }, [id, setNodes])
+         return { ...d, fieldsData: next }
+      })
+   }, [id, updateNodeData])
 
    const handleFieldConfigChange = useCallback((patch: Partial<FieldConfig>) => {
-      setNodes(ns => ns.map(n => n.id !== id ? n : ({
-         ...n,
-         data: {
-            ...n.data,
-            fieldsData: (n.data as any).fieldsData.map((f: any) =>
-               f.id === selectedFieldId
-                  ? { ...f, config: { ...(f.config ?? { type: 'text' }), ...patch } }
-                  : f,
-            ),
-         },
-      })))
-   }, [setNodes, id, selectedFieldId])
+      updateNodeData(id, (d: any) => ({
+         ...d,
+         fieldsData: (d.fieldsData as any[]).map((f: any) =>
+            f.id === selectedFieldId
+               ? { ...f, config: { ...(f.config ?? { type: 'text' }), ...patch } }
+               : f,
+         ),
+      }))
+   }, [updateNodeData, id, selectedFieldId])
 
    const handleSelectField = useCallback((e: MouseEvent<HTMLElement>) => {
       console.log('handleSelectField')
@@ -211,7 +209,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
          )}
          <NodeToolbar isVisible={selected}>
             <ToggleGroup aria-label="Toggle node editing" onValueChange={handleToggleGroupValueChange}
-                         variant="default" type="multiple" className="gap-1">
+               variant="default" type="multiple" className="gap-1">
                <ToggleGroupItem value="resize" aria-label="Resize node">
                   <Maximize2 className="h-4 w-4" />
                </ToggleGroupItem>
@@ -229,7 +227,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
             <Tooltip>
                <TooltipTrigger asChild>
                   <button type="button" className="text-muted-foreground hover:text-foreground"
-                          aria-label="Show description">
+                     aria-label="Show description">
                      <Info className="h-4 w-4" />
                   </button>
                </TooltipTrigger>

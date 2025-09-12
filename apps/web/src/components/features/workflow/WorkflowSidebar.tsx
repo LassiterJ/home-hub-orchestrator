@@ -1,5 +1,6 @@
 import { FormNode } from '@/components/features/workflow/nodes'
 import { DraggableNode } from '@/components/features/workflow/nodes/DraggableNode'
+import { FormControlRendererKey, formNodeFormControlMap } from '@/components/features/workflow/nodeTypes'
 import { SearchForm } from '@/components/shared/SearchForm'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
 import {
@@ -13,14 +14,14 @@ import {
    SidebarMenuItem,
    SidebarRail,
 } from '@/components/ui/Sidebar'
+import { useWorkflowRFStore } from '@/stores/workflowRF.store'
 import { type DragEventData } from '@neodrag/react'
 import { useReactFlow, type XYPosition } from '@xyflow/react'
 import { BarChart3, Brain, ChevronRight, FileText, List, Settings, Table, Text, Upload, Zap } from 'lucide-react'
 import * as React from 'react'
 import { useCallback } from 'react'
 import { buildDragRect, getFlowRect, hasMatchingId, isPointInRect, nextStatusOnDrag } from './utils'
-import { getNewUUID } from '@/utils'
-import { FormControlRendererKey, formNodeFormControlMap } from '@/components/features/workflow/nodeTypes'
+const newId = (prefix?: string) => `${prefix ? `${prefix}-` : ''}${crypto.randomUUID()}`
 
 // This is contains sample data.
 const data = {
@@ -145,7 +146,9 @@ const getBadgeClass = (t: string) => {
 
 
 export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-   const { setNodes, screenToFlowPosition, getIntersectingNodes } = useReactFlow()
+   const { screenToFlowPosition, getIntersectingNodes } = useReactFlow()
+   const updateNodes = useWorkflowRFStore((s) => s.updateNodes)
+   const addNodes = useWorkflowRFStore((s) => s.addNodes)
 
    /**
     * Update node highlight while dragging a palette item over the canvas.
@@ -164,7 +167,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
 
       // console.debug('drag:formIntersections', { count: formIntersections.length })
 
-      setNodes((ns) =>
+      updateNodes((ns) =>
          ns.map((n) => {
             const intersecting = hasMatchingId(formIntersections, n.id)
             return {
@@ -176,7 +179,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
             }
          }),
       )
-   }, [screenToFlowPosition, getIntersectingNodes, setNodes])
+   }, [screenToFlowPosition, getIntersectingNodes, updateNodes])
    /**
     * On drop:
     * - If not over the flow area, ignore
@@ -197,18 +200,18 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
          // Empty canvas: create node
          if (formIntersections.length === 0) {
             const newNode = {
-               id: getNewUUID({ prefix: `node:${nodeType}` }), //TODO: when implementing backend, this will likely come from there.
+               id: newId(`node:${nodeType}`), //TODO: when implementing backend, this will likely come from there.
                type: nodeType,
                position,
                data: { label: `${nodeType} node` },
             }
             // TODO: logger.info('drop:createNode', { nodeType, position })
-            setNodes((ns) => [...ns, newNode])
+            addNodes(newNode as any)
             return
          }
 
          // Dropped over a Form: append a field configuration into the target form(s)
-         setNodes((ns) =>
+         updateNodes((ns) =>
             ns.map((n) => {
                if (!hasMatchingId(formIntersections, n.id)) return n
 
@@ -221,7 +224,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
                const Control = formNodeFormControlMap[nodeType as FormControlRendererKey]
 
                const newField = {
-                  id: getNewUUID({ prefix: 'formField' }),
+                  id: newId('formField'),
                   name: 'Name',
                   label: 'Label',
                   placeholder: 'placeholder',
@@ -241,7 +244,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
             }),
          )
       },
-      [screenToFlowPosition, getIntersectingNodes, setNodes],
+      [screenToFlowPosition, getIntersectingNodes, updateNodes, addNodes],
    )
    // const handleNodeDrop = useCallback(
    //    ({ nodeType, currentDragNode, screenPosition }: handleNodeDropArgs) => {
@@ -349,7 +352,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
                            <SidebarMenu className={'gap-3'}>
                               {group.items.map((node) => (
                                  <SidebarMenuItem key={`${node.type}-${node.label}`}
-                                                  className={''}>
+                                    className={''}>
                                     <DraggableNode
                                        nodeType={node.type}
                                        onDrop={handleNodeDrop}
