@@ -174,6 +174,20 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
       }))
    }, [id, setNodes])
 
+   const handleFieldConfigChange = useCallback((patch) => {
+      setNodes(ns => ns.map(n => n.id !== id ? n : ({
+         ...n,
+         data: {
+            ...n.data,
+            fieldsData: (n.data as any).fieldsData.map((f: any) =>
+               f.id === selectedFieldId
+                  ? { ...f, config: { ...(f.config ?? { type: 'text' }), ...patch } }
+                  : f,
+            ),
+         },
+      })))
+   }, [setNodes])
+
    const handleSelectField = useCallback((e) => {
       const data = e.target.data
 
@@ -185,26 +199,11 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
       <BaseNode className={className} status={'initial'}>
          {isEditing &&
             <NodeAppendix position="right" className="p-2">
-               <NodeAppendix position="right">
-                  <FieldConfigPanel
-                     fieldId={selectedFieldId}
-                     config={fieldsData?.find(f => f.id === selectedFieldId)?.config}
-                     onChange={(patch) => {
-                        setNodes(ns => ns.map(n => n.id !== id ? n : ({
-                           ...n,
-                           data: {
-                              ...n.data,
-                              fieldsData: (n.data as any).fieldsData.map((f: any) =>
-                                 f.id === selectedFieldId
-                                    ? { ...f, config: { ...(f.config ?? { type: 'text' }), ...patch } }
-                                    : f,
-                              ),
-                           },
-                        })))
-                     }}
-                     onFieldSelect={handleSelectField}
-                  />
-               </NodeAppendix>
+               <FieldConfigPanel
+                  fieldId={selectedFieldId}
+                  config={fieldsData?.find(f => f.id === selectedFieldId)?.config}
+                  onChange={handleFieldChange}
+               />
             </NodeAppendix>
 
          }
@@ -255,7 +254,9 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
                   {((fieldsData ?? []) as any).map((field: FieldForSchema<z.ZodTypeAny>, index: number) => (
                      <List.Item key={field.id} id={field.id} value={field} asChild>
                         <div className="rounded border p-2">
-                           <FieldRowEditor index={index} field={field} onChange={handleFieldChange as any} />
+                           <FieldRowEditor index={index} field={field}
+                                           onChange={handleFieldConfigChange as any}
+                                           onFieldSelect={handleSelectField} />
                         </div>
                      </List.Item>
                   ))}
