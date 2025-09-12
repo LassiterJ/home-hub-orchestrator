@@ -93,13 +93,17 @@ function FieldRowEditor<T extends z.ZodTypeAny>({
    onChange: (index: number, patch: Partial<FieldForSchema<T>>) => void
 }) {
    return (
-      <div className="inline-flex items-start gap-2 py-2 border-b last:border-b-0">
-         {/* Drag handle + keyboard fallback controls */}
-         <div className="flex items-center gap-1 pt-2 select-none">
-            <List.Handle>
-               <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </List.Handle>
-         </div>
+      <div className="flex items-stretch gap-2 py-2 border-b last:border-b-0">
+         {/* Drag handle column fills full row height via self-stretch; background bar is absolute */}
+         <List.Handle asChild>
+            <div className="relative w-6 self-stretch select-none draggable">
+               <div className="pointer-events-none absolute inset-0 mx-[1px] rounded bg-neutral-200/60 shadow-sm" />
+               <div
+                  className="relative z-10 flex h-full items-center justify-center cursor-grab active:cursor-grabbing">
+                  <GripVertical className="h-4 w-4 text-neutral-500" />
+               </div>
+            </div>
+         </List.Handle>
 
          {/* Editable inputs: name, label, description */}
          <div className="grid grid-cols-1 gap-2 flex-1">
