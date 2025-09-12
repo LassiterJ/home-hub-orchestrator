@@ -1,6 +1,5 @@
 import { BaseHandle } from '@/components/features/workflow/handles/BaseHandle'
 import { NodeAppendix } from '@/components/features/workflow/NodeAppendix'
-import { FieldConfigPanel } from '@/components/features/workflow/nodes/FieldConfigPanel'
 import { Button } from '@/components/ui/Button/'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
 import { Input } from '@/components/ui/Input'
@@ -10,10 +9,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip
 import { Label } from '@home-hub-orchestrator/ui'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
 import { Edit, FileText, GripVertical, Info, Maximize2 } from 'lucide-react'
-import { MouseEventHandler, useCallback, useMemo, useState } from 'react'
+import { type MouseEvent, MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { BaseNode, BaseNodeContent, BaseNodeFooter, BaseNodeHeader, BaseNodeHeaderTitle } from './BaseNode'
+import { type FieldConfig, FieldConfigPanel } from './FieldConfigPanel'
 
 /**
  * FormNodeV2
@@ -46,6 +46,8 @@ type FieldForSchema<T extends z.ZodTypeAny> = {
    placeholder?: string
    Control: React.ComponentType<React.ComponentProps<typeof Input>>
    description?: string
+   // Optional configuration edited via the NodeAppendix panel
+   config?: any
 }
 
 /**
@@ -100,17 +102,17 @@ function FieldRowEditor<T extends z.ZodTypeAny>({
       <div className="flex items-stretch gap-2 py-2 border-b last:border-b-0">
          {/* Drag handle column fills full row height via self-stretch; background bar is absolute */}
          <List.Handle asChild>
-            <div className="relative w-6 self-stretch select-none draggable">
-               <div className="pointer-events-none absolute inset-0 mx-[1px] rounded bg-neutral-200/60 shadow-sm" />
+            <div
+               className="relative w-6 self-stretch select-none cursor-grab active:cursor-grabbing draggable bg-neutral-200/60">
                <div
-                  className="relative z-10 flex h-full items-center justify-center cursor-grab active:cursor-grabbing">
+                  className="relative z-10 flex h-full items-center justify-center ">
                   <GripVertical className="h-4 w-4 text-neutral-500" />
                </div>
             </div>
          </List.Handle>
 
          {/* Editable inputs: name, label, description */}
-         <div data-fieldId={field.id} className="grid grid-cols-1 gap-2 flex-1" onClick={onFieldSelect}>
+         <div data-fieldid={field.id} className="grid grid-cols-1 gap-2 flex-1 curor-pointer" onClick={onFieldSelect}>
             <div>
                <Label>Name</Label>
                <Input value={field.name}
@@ -146,7 +148,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
 
    const { setNodes } = useReactFlow()
    const [formSchema] = useState<z.ZodTypeAny>(() => z.object({}))
-   const [selectedFieldId, setSelectedFieldId] = useState(null)
+   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null)
    const Icon = icon
    const isEditing = data?.isEditing ?? false
 
@@ -174,7 +176,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
       }))
    }, [id, setNodes])
 
-   const handleFieldConfigChange = useCallback((patch) => {
+   const handleFieldConfigChange = useCallback((patch: Partial<FieldConfig>) => {
       setNodes(ns => ns.map(n => n.id !== id ? n : ({
          ...n,
          data: {
@@ -186,27 +188,27 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
             ),
          },
       })))
-   }, [setNodes])
+   }, [setNodes, id, selectedFieldId])
 
-   const handleSelectField = useCallback((e) => {
-      const data = e.target.data
-
-      console.log('handleSelectField: data', data)
-      setSelectedFieldId(data.fieldId) //TODO: see if this is correct way to get the id from a data attribute
-   }, [setSelectedFieldId])
+   const handleSelectField = useCallback((e: MouseEvent<HTMLElement>) => {
+      console.log('handleSelectField')
+      const el = e.currentTarget as HTMLElement
+      const fieldId = (el as any).dataset?.fieldId ?? (el as any).dataset?.fieldid
+      console.log('fieldId', fieldId)
+      if (fieldId) setSelectedFieldId(fieldId)
+   }, [])
 
    return (
       <BaseNode className={className} status={'initial'}>
-         {isEditing &&
+         {isEditing && (
             <NodeAppendix position="right" className="p-2">
                <FieldConfigPanel
                   fieldId={selectedFieldId}
-                  config={fieldsData?.find(f => f.id === selectedFieldId)?.config}
-                  onChange={handleFieldChange}
+                  config={fieldsData?.find((f) => f.id === selectedFieldId)?.config}
+                  onChange={handleFieldConfigChange}
                />
             </NodeAppendix>
-
-         }
+         )}
          <NodeToolbar isVisible={selected}>
             <ToggleGroup aria-label="Toggle node editing" onValueChange={handleToggleGroupValueChange}
                          variant="default" type="multiple" className="gap-1">
@@ -237,7 +239,7 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
             </Tooltip>
          </BaseNodeHeader>
 
-         <BaseNodeContent>
+         <BaseNodeContent className={'nodrag cursor-auto'}>
             {isEditing ? (
                /**
                 * Edit mode: Controlled Reorderable List of fields.
@@ -251,15 +253,21 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
                   onReorder={handleReorder as any}
                   listClassName="flex flex-col gap-2"
                >
-                  {((fieldsData ?? []) as any).map((field: FieldForSchema<z.ZodTypeAny>, index: number) => (
-                     <List.Item key={field.id} id={field.id} value={field} asChild>
-                        <div className="rounded border p-2">
-                           <FieldRowEditor index={index} field={field}
-                                           onChange={handleFieldConfigChange as any}
-                                           onFieldSelect={handleSelectField} />
-                        </div>
-                     </List.Item>
-                  ))}
+                  {((fieldsData ?? []) as any).map((field: FieldForSchema<z.ZodTypeAny>, index: number) => {
+                     const isSelected = isEditing && selectedFieldId === field.id
+                     return (
+                        <List.Item key={field.id} id={field.id} value={field} asChild>
+                           <div className={`rounded border p-2 ${isSelected ? 'ring-1 ring-blue-400' : ''}`}>
+                              <FieldRowEditor
+                                 index={index}
+                                 field={field}
+                                 onChange={handleFieldChange as any}
+                                 onFieldSelect={handleSelectField}
+                              />
+                           </div>
+                        </List.Item>
+                     )
+                  })}
                </List>
             ) : (
                <FieldsView fieldsData={(fieldsData ?? []) as any} formSchema={formSchema as any} />

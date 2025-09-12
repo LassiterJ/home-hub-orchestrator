@@ -37,3 +37,7 @@ downloads
 # IDE
 .idea
 .vscode
+
+# External Docs
+/apps/web/docs/
+/docs/
