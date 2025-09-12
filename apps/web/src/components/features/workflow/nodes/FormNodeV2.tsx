@@ -1,4 +1,6 @@
 import { BaseHandle } from '@/components/features/workflow/handles/BaseHandle'
+import { NodeAppendix } from '@/components/features/workflow/NodeAppendix'
+import { FieldConfigPanel } from '@/components/features/workflow/nodes/FieldConfigPanel'
 import { Button } from '@/components/ui/Button/'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
 import { Input } from '@/components/ui/Input'
@@ -8,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip
 import { Label } from '@home-hub-orchestrator/ui'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
 import { Edit, FileText, GripVertical, Info, Maximize2 } from 'lucide-react'
-import { useCallback, useMemo, useState } from 'react'
+import { MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { BaseNode, BaseNodeContent, BaseNodeFooter, BaseNodeHeader, BaseNodeHeaderTitle } from './BaseNode'
@@ -47,7 +49,7 @@ type FieldForSchema<T extends z.ZodTypeAny> = {
 }
 
 /**
- * View-only rendering of fields as a form (minimal demo).
+ * View-only rendering of fields as a form.
  */
 function FieldsView<T extends z.ZodTypeAny>({ fieldsData, formSchema: _formSchema }: {
    fieldsData?: Array<FieldForSchema<T>>;
@@ -87,10 +89,12 @@ function FieldRowEditor<T extends z.ZodTypeAny>({
                                                    index,
                                                    field,
                                                    onChange,
+                                                   onFieldSelect,
                                                 }: {
    index: number
    field: FieldForSchema<T>
    onChange: (index: number, patch: Partial<FieldForSchema<T>>) => void
+   onFieldSelect: MouseEventHandler
 }) {
    return (
       <div className="flex items-stretch gap-2 py-2 border-b last:border-b-0">
@@ -106,7 +110,7 @@ function FieldRowEditor<T extends z.ZodTypeAny>({
          </List.Handle>
 
          {/* Editable inputs: name, label, description */}
-         <div className="grid grid-cols-1 gap-2 flex-1">
+         <div data-fieldId={field.id} className="grid grid-cols-1 gap-2 flex-1" onClick={onFieldSelect}>
             <div>
                <Label>Name</Label>
                <Input value={field.name}
@@ -140,11 +144,11 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
       fieldsData,
    } = data
 
-   const Icon = icon
    const { setNodes } = useReactFlow()
-   const isEditing = data?.isEditing ?? false
-
    const [formSchema] = useState<z.ZodTypeAny>(() => z.object({}))
+   const [selectedFieldId, setSelectedFieldId] = useState(null)
+   const Icon = icon
+   const isEditing = data?.isEditing ?? false
 
    /** Update edit/resize flags via toolbar */
    function handleToggleGroupValueChange(values: string[]) {
@@ -170,8 +174,40 @@ export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {
       }))
    }, [id, setNodes])
 
+   const handleSelectField = useCallback((e) => {
+      const data = e.target.data
+
+      console.log('handleSelectField: data', data)
+      setSelectedFieldId(data.fieldId) //TODO: see if this is correct way to get the id from a data attribute
+   }, [setSelectedFieldId])
+
    return (
       <BaseNode className={className} status={'initial'}>
+         {isEditing &&
+            <NodeAppendix position="right" className="p-2">
+               <NodeAppendix position="right">
+                  <FieldConfigPanel
+                     fieldId={selectedFieldId}
+                     config={fieldsData?.find(f => f.id === selectedFieldId)?.config}
+                     onChange={(patch) => {
+                        setNodes(ns => ns.map(n => n.id !== id ? n : ({
+                           ...n,
+                           data: {
+                              ...n.data,
+                              fieldsData: (n.data as any).fieldsData.map((f: any) =>
+                                 f.id === selectedFieldId
+                                    ? { ...f, config: { ...(f.config ?? { type: 'text' }), ...patch } }
+                                    : f,
+                              ),
+                           },
+                        })))
+                     }}
+                     onFieldSelect={handleSelectField}
+                  />
+               </NodeAppendix>
+            </NodeAppendix>
+
+         }
          <NodeToolbar isVisible={selected}>
             <ToggleGroup aria-label="Toggle node editing" onValueChange={handleToggleGroupValueChange}
                          variant="default" type="multiple" className="gap-1">

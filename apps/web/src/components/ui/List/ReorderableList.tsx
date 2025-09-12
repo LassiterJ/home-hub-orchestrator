@@ -19,6 +19,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { createPortal } from 'react-dom'
 import invariant from 'tiny-invariant'
 import { DropIndicator } from './DropIndicator'
 
@@ -272,6 +273,7 @@ export interface ListItemProps<T> {
 type ItemState =
   | { type: 'idle' }
   | { type: 'over'; closest: Edge | null }
+  | { type: 'preview'; container: HTMLElement }
 
 /**
  * List.Item wires DnD behavior to an item container.
@@ -306,11 +308,37 @@ function ListItemImpl<T>({ id, value, asChild, allowedEdges, stickyDropTarget, c
           return { [listItemDataKey]: true, listId: list.listId, itemId: id }
         },
         onGenerateDragPreview({ nativeSetDragImage }) {
-          // Small native preview to keep UI responsive
+          // Small native preview to keep UI responsive. We'll mount a tiny JSX preview
+          // into the provided container so we avoid the browser's default drag icon.
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: pointerOutsideOfPreview({ x: '16px', y: '8px' }),
-            render() {
+            render({ container }) {
+              // Clone the current item DOM to use as the native drag preview.
+              // This avoids context issues and faithfully mirrors the row.
+              const source = containerRef.current
+              if (source) {
+                const clone = source.cloneNode(true) as HTMLElement
+                clone.style.pointerEvents = 'none'
+                clone.style.margin = '0'
+                // Set to layout (unscaled) size first
+                const ow = source.offsetWidth || 1
+                const oh = source.offsetHeight || 1
+                clone.style.width = `${ow}px`
+                clone.style.height = `${oh}px`
+                clone.style.transformOrigin = 'top left'
+
+                // Compute visual scale applied to the source (e.g., React Flow zoom)
+                const rect = source.getBoundingClientRect()
+                const scaleX = rect.width / ow
+                const scaleY = rect.height / oh
+                // Apply the same scale so the preview appears the same on screen
+                if (Number.isFinite(scaleX) && Number.isFinite(scaleY)) {
+                  clone.style.transform = `scale(${scaleX}, ${scaleY})`
+                }
+                clone.classList.add('shadow-md')
+                container.appendChild(clone)
+              }
             },
           })
         },
@@ -318,6 +346,10 @@ function ListItemImpl<T>({ id, value, asChild, allowedEdges, stickyDropTarget, c
           if (value !== undefined) {
             list.onDragStart?.(value)
           }
+        },
+        onDrop() {
+          // Ensure preview is torn down when the drag completes
+          setState({ type: 'idle' })
         },
       }),
       dropTargetForElements({
@@ -375,6 +407,8 @@ function ListItemImpl<T>({ id, value, asChild, allowedEdges, stickyDropTarget, c
           {merged}
           {/* allow theming via wrapper if needed */}
           <div className={list.dropIndicatorClassName}>{indicator}</div>
+          {/* We now clone the DOM for preview; keep JSX fallback around as a safety net */}
+          {state.type === 'preview' ? createPortal(<DragPreviewFallback />, state.container) : null}
         </div>
       </ItemContext.Provider>
     )
@@ -385,8 +419,17 @@ function ListItemImpl<T>({ id, value, asChild, allowedEdges, stickyDropTarget, c
       <div className="relative">
         <div ref={containerRef}>{children}</div>
         <div className={list.dropIndicatorClassName}>{indicator}</div>
+        {state.type === 'preview' ? createPortal(<DragPreviewFallback />, state.container) : null}
       </div>
     </ItemContext.Provider>
+  )
+}
+
+function DragPreviewFallback() {
+  return (
+    <div className="rounded border border-neutral-200 bg-white px-2 py-1 text-xs shadow-md">
+      Moving…
+    </div>
   )
 }
 

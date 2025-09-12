@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { FormNodeV2 } from '@/components/features/workflow/nodes/FormNodeV2'
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 
@@ -40,7 +39,6 @@ function ListTest() {
             <Button onClick={toggleSelected}>
                Toggle Selected
             </Button>
-            <FormNodeV2 id={'some-test-id-1387198237'} isConnectable={true} data={sampleData} selected={false} />
 
          </div>
       </div>
