@@ -21,7 +21,8 @@ import { BarChart3, Brain, ChevronRight, FileText, List, Settings, Table, Text, 
 import * as React from 'react'
 import { useCallback } from 'react'
 import { buildDragRect, getFlowRect, hasMatchingId, isPointInRect, nextStatusOnDrag } from './utils'
-const newId = (prefix?: string) => `${prefix ? `${prefix}-` : ''}${crypto.randomUUID()}`
+import { getNewUUID } from '@/utils'
+
 
 // This is contains sample data.
 const data = {
@@ -200,7 +201,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
          // Empty canvas: create node
          if (formIntersections.length === 0) {
             const newNode = {
-               id: newId(`node:${nodeType}`), //TODO: when implementing backend, this will likely come from there.
+               id: getNewUUID({ prefix: `node:${nodeType}` }), //TODO: when implementing backend, this will likely come from there.
                type: nodeType,
                position,
                data: { label: `${nodeType} node` },
@@ -224,7 +225,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
                const Control = formNodeFormControlMap[nodeType as FormControlRendererKey]
 
                const newField = {
-                  id: newId('formField'),
+                  id: getNewUUID({ prefix: 'formField' }),
                   name: 'Name',
                   label: 'Label',
                   placeholder: 'placeholder',
@@ -352,7 +353,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
                            <SidebarMenu className={'gap-3'}>
                               {group.items.map((node) => (
                                  <SidebarMenuItem key={`${node.type}-${node.label}`}
-                                    className={''}>
+                                                  className={''}>
                                     <DraggableNode
                                        nodeType={node.type}
                                        onDrop={handleNodeDrop}

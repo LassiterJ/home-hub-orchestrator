@@ -1,5 +1,5 @@
 import { Edge, Node, Position } from '@xyflow/react'
-import { NodeData } from '../../../types'
+import { NodeData } from '@/types'
 import { MenuItemSpec } from '@/components/ui/ContextMenu/buildContextMenu'
 
 export const sampleNodes: Node<NodeData>[] = [
@@ -10,7 +10,6 @@ export const sampleNodes: Node<NodeData>[] = [
       data: {
          label: 'Image Dataset',
          description: 'Your source images for processing',
-         kind: 'example-kind',
          runtime: 'example-runtime',
          effect: 'exampleEffect',
          inputs: ['example-input'],
