@@ -1,11 +1,4 @@
-import {
-   Background,
-   BackgroundVariant,
-   Controls,
-   MiniMap,
-   ReactFlow,
-   ReactFlowProvider,
-} from '@xyflow/react'
+import { Background, BackgroundVariant, Controls, MiniMap, ReactFlow, ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useEffect } from 'react'
 
@@ -58,6 +51,7 @@ export const WorkflowBuilder = () => {
                   <WorkflowSidebar />
                   <SidebarInset>
                      <div className="h-full w-full">
+
                         <ReactFlow
                            nodes={nodes}
                            edges={edges}

@@ -1,5 +1,6 @@
-import { FormNode } from '@/components/features/workflow/nodes'
+import { FormNodeV2 } from '@/components/features/workflow/nodes'
 import { DraggableNode } from '@/components/features/workflow/nodes/DraggableNode'
+import { type FieldConfig } from '@/components/features/workflow/nodes/FieldConfigPanel'
 import { FormControlRendererKey, formNodeFormControlMap } from '@/components/features/workflow/nodeTypes'
 import { SearchForm } from '@/components/shared/SearchForm'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
@@ -139,6 +140,26 @@ const getBadgeClass = (t: string) => {
 }
 
 /**
+ * Default field configuration per palette node type.
+ * Extend this mapping as you add more field kinds (checkbox, select, date, etc.).
+ */
+const defaultConfigFor = (nodeType: string): FieldConfig => {
+   switch (nodeType) {
+      case 'input':
+         // Text input defaults: no constraints, optional, no placeholder by default
+         return { type: 'text', required: false, placeholder: '' }
+      // case 'checkbox':
+      //    return { type: 'checkbox' }
+      // case 'select':
+      //    return { type: 'select', options: [], multiple: false }
+      // case 'date':
+      //    return { type: 'date' }
+      default:
+         return { type: 'text' }
+   }
+}
+
+/**
  * Behavior change for dragging from menu to canvas
  * When dragNode enters flow on first time create a new flowNode
  * switch dragNode with flowNode so RH knows when this node is intersecting with an existing node via getIntersectingNodes or isIntersecting
@@ -163,7 +184,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
       const position = screenToFlowPosition(screenPosition)
       const rect = buildDragRect(currentDragNode, position)
       const intersectingNodes = getIntersectingNodes(rect, true)
-      const formIntersections = intersectingNodes.filter((node) => node.type === 'form') as FormNode[]
+      const formIntersections = intersectingNodes.filter((node) => node.type === 'form') as FormNodeV2[]
 
 
       // console.debug('drag:formIntersections', { count: formIntersections.length })
@@ -195,7 +216,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
          const position = screenToFlowPosition(screenPosition)
          const rect = buildDragRect(currentDragNode, position)
          const intersectingNodes = getIntersectingNodes(rect, true)
-         const formIntersections = intersectingNodes.filter((node) => node.type === 'form') as FormNode[]
+         const formIntersections = intersectingNodes.filter((node) => node.type === 'form') as FormNodeV2[]
 
 
          // Empty canvas: create node
@@ -231,6 +252,8 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
                   placeholder: 'placeholder',
                   Control,
                   description: ' Description',
+                  // Seed a sensible default config so the FieldConfigPanel has immediate values
+                  config: defaultConfigFor(nodeType),
                }
 
                const fieldsData = Array.isArray(n?.data?.fieldsData) ? n.data.fieldsData : []
@@ -247,85 +270,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
       },
       [screenToFlowPosition, getIntersectingNodes, updateNodes, addNodes],
    )
-   // const handleNodeDrop = useCallback(
-   //    ({ nodeType, currentDragNode, screenPosition }: handleNodeDropArgs) => {
-   //       const flow = document.querySelector('.react-flow')
-   //       const flowRect = flow?.getBoundingClientRect()
-   //       const isInFlow =
-   //          flowRect &&
-   //          screenPosition.x >= flowRect.left &&
-   //          screenPosition.x <= flowRect.right &&
-   //          screenPosition.y >= flowRect.top &&
-   //          screenPosition.y <= flowRect.bottom
-   //
-   //       const position = screenToFlowPosition(screenPosition)
-   //
-   //       const newNode = {
-   //          id: getId(),
-   //          type: nodeType,
-   //          position,
-   //          data: { label: `${nodeType} node` },
-   //       }
-   //       // Create a new node and add it to the flow
-   //       if (isInFlow) {
-   //
-   //
-   //          // Is dropped on form?
-   //          let boundingClientRect = currentDragNode.getBoundingClientRect()
-   //
-   //          const rect: Rect = {
-   //             x: position.x,
-   //             y: position.y,
-   //             width: boundingClientRect.width,
-   //             height: boundingClientRect.height,
-   //          }
-   //
-   //          const intersections = getIntersectingNodes(rect, true)
-   //          const formIntersections: false | FormNode[] = intersections.map((node) => node.type === 'form' && node)
-   //          const hasMatchingId = (items: FormNode[], id: string) =>
-   //             items.some(item => item.id === id)
-   //          if (!formIntersections || formIntersections.length < 1) {
-   //             setNodes((ns) => [...ns, newNode])
-   //             return
-   //          }
-   //          setNodes((ns) =>
-   //             ns.map((n) => {
-   //                if (!hasMatchingId(formIntersections, n.id)) {
-   //                   return n
-   //                }
-   //
-   //                const getStatus = ({ prevStatus = 'initial' }) => {
-   //                   const isAlreadyHighlighted = prevStatus === 'intersected'
-   //                   return isAlreadyHighlighted ? 'initial' : prevStatus
-   //                }
-   //                const status = getStatus({ prevStatus: n?.data?.status })
-   //                console.log('nodeType: ', nodeType)
-   //                console.log('formNodeMap: ', formNodeFormControlMap[`${nodeType}`])
-   //                const newField = {
-   //                   name: 'default',
-   //                   label: 'default',
-   //                   placeholder: 'placeholder',
-   //                   Control: formNodeFormControlMap[nodeType],
-   //                   description: ' test description',
-   //                }
-   //                const tempFieldsData = n?.data?.fieldsData || []
-   //                return {
-   //                   ...n,
-   //                   data: {
-   //                      ...n.data,
-   //                      status: status,
-   //                      fieldsData: [...tempFieldsData, newField],
-   //                   },
-   //                }
-   //             }),
-   //          )
-   //
-   //       }
-   //
-   //
-   //    },
-   //    [setNodes, screenToFlowPosition],
-   // )
+
    return (
       <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
          <SidebarHeader>
@@ -384,55 +329,3 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
       </Sidebar>
    )
 }
-
-// export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-//    return (
-//       <Sidebar {...props}>
-//          <SidebarHeader>
-//             <VersionSwitcher
-//                versions={data.versions}
-//                defaultVersion={data.versions[0]}
-//             />
-//             <SearchForm />
-//          </SidebarHeader>
-//          <SidebarContent className="gap-0">
-//             {/* We create a collapsible SidebarGroup for each parent. */}
-//             {data.nodesMain.map((item) => (
-//                <Collapsible
-//                   key={item.title}
-//                   title={item.title}
-//                   defaultOpen
-//                   className="group/collapsible"
-//                >
-//                   <SidebarGroup>
-//                      <SidebarGroupLabel
-//                         asChild
-//                         className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
-//                      >
-//                         <CollapsibleTrigger>
-//                            {item.title}{' '}
-//                            <ChevronRight
-//                               className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-//                         </CollapsibleTrigger>
-//                      </SidebarGroupLabel>
-//                      <CollapsibleContent>
-//                         <SidebarGroupContent>
-//                            <SidebarMenu>
-//                               {item.items.map((item) => (
-//                                  <SidebarMenuItem key={item.label}>
-//                                     <SidebarMenuButton>
-//                                        {item.label}
-//                                     </SidebarMenuButton>
-//                                  </SidebarMenuItem>
-//                               ))}
-//                            </SidebarMenu>
-//                         </SidebarGroupContent>
-//                      </CollapsibleContent>
-//                   </SidebarGroup>
-//                </Collapsible>
-//             ))}
-//          </SidebarContent>
-//          <SidebarRail />
-//       </Sidebar>
-//    )
-// }
