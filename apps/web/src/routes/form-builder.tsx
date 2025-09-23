@@ -13,7 +13,7 @@ function FormBuilderPage() {
    }
 
    return (
-      <div className="h-screen">
+      <div className="h-screen flex-col ga-4">
          <div className="h-16 border-b bg-background flex items-center px-4">
             <h1 className="text-2xl font-bold">Form Builder</h1>
             <div className="ml-auto text-sm text-muted-foreground">
@@ -22,8 +22,8 @@ function FormBuilderPage() {
          </div>
          <SimpleFormBuilder
             onSchemaChange={handleSchemaChange}
-            debug={false}
-            className="h-[calc(100vh-4rem)]"
+            debug={true}
+            className=""
          />
       </div>
    )

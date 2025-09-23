@@ -2,6 +2,7 @@ import { FormBuilderProvider, useFormBuilder } from '@/stores/FormBuilderProvide
 import * as React from 'react'
 import { cn } from '@/utils'
 import { FormEditor } from '@/features/formbuilder/builder/FormEditor'
+import { PreviewForm } from '@/features/formbuilder/PreviewForm'
 
 /**
  * SimpleFormBuilder
@@ -37,16 +38,14 @@ function SimpleInner({ onSchemaChange, className, debug }: SimpleInnerProps) {
    React.useEffect(() => {
       onSchemaChange?.(schema)
    }, [schema, onSchemaChange])
-   const numColumns = !!debug ? '2' : '3'
-
 
    return (
-      <div className={cn(className, `grid grid-cols-${numColumns}`)}>
+      <div className={cn(className, `flex justify-center`)}>
          {debug ?
             <pre className="p-2 text-xs bg-muted/40 overflow-auto">{JSON.stringify(schema, null, 2)}</pre> : null}
-         {/*<div className="p-4 max-w-2xl mx-auto">*/}
-         {/*   <PreviewForm schema={schema} defaults={defaults} />*/}
-         {/*</div>*/}
+         <div className="p-4 max-w-2xl mx-auto">
+            <PreviewForm schema={schema} defaults={defaults} />
+         </div>
          {mode === 'edit' &&
             <FormEditor schema={schema} defaults={defaults} />
          }

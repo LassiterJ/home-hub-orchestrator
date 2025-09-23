@@ -33,13 +33,9 @@ export function PreviewForm({ schema, defaults, onSubmit }: PreviewFormProps) {
    const handleSubmit = onSubmit || (() => {
       console.log('No onSubmit passed to PreviewForm component.')
    })
+   
    const form = useForm<Record<string, unknown>>({ defaultValues: defaults, mode: 'onChange' })
-
-   React.useEffect(() => {
-      // TODO: Cursor wrote this but I have a feeling it will reset the form on every change which might not be desired.
-      form.reset(defaults)
-   }, [defaults, form])
-
+   console.log('form: ', form)
    return (
       <Form {...form}>
          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">

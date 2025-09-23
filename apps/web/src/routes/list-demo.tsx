@@ -13,6 +13,7 @@ const listItems = [
    { key: 'item4', label: 'Item4' },
    { key: 'item5', label: 'Item5' },
 ]
+
 const sampleData = [
    {
       'id': 'formField-819e770d-a82d-48f9-8d0c-9885f3e26ce2',
@@ -39,7 +40,6 @@ function ListTest() {
             <Button onClick={toggleSelected}>
                Toggle Selected
             </Button>
-
          </div>
       </div>
    )

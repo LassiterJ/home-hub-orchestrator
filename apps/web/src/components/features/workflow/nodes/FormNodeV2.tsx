@@ -10,7 +10,7 @@ import { getLogger } from '@/lib/logger'
 import { FormBuilderProvider, useFormBuilder, useFormBuilderApi } from '@/stores/FormBuilderProvider'
 import { useWorkflowRFStore } from '@/stores/workflowRF.store'
 import { type Node, NodeProps, NodeToolbar, Position, useReactFlow } from '@xyflow/react'
-import { Edit, FileText, GripVertical, Info, Maximize2 } from 'lucide-react'
+import { Edit, FileText, Info, Maximize2 } from 'lucide-react'
 import { memo, type MouseEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -96,43 +96,6 @@ interface FieldRowEditorProps {
    field: FieldConfig
    onChange: (id: string, patch: Partial<FieldForSchema<T>>) => void
    // onFieldSelect: MouseEventHandler
-}
-
-export function FieldRowEditor<T extends z.ZodTypeAny>({
-                                                          index,
-                                                          field,
-                                                          onChange,
-                                                          // onFieldSelect,
-                                                       }: FieldRowEditorProps) {
-   return (
-      <div id={field.id} className="flex items-stretch gap-2 py-2 border-b last:border-b-0 curor-pointer"
-      >
-         {/* Drag handle column fills full row height via self-stretch; background bar is absolute */}
-         <List.Handle asChild>
-            <div
-               className="relative w-6 self-stretch select-none cursor-grab active:cursor-grabbing draggable bg-neutral-200/60"
-            >
-               <div
-                  className="relative z-10 flex h-full items-center justify-center ">
-                  <GripVertical className="h-4 w-4 text-neutral-500" />
-               </div>
-            </div>
-         </List.Handle>
-
-         {/* Editable inputs: name, label, description */}
-         <div>
-            <div>
-               {field.name}
-            </div>
-            <div>
-               {field.label}
-            </div>
-            <div>
-               {field.description}
-            </div>
-         </div>
-      </div>
-   )
 }
 
 export function FormNodeV2({ id, data, selected }: NodeProps<FormNodeV2>) {

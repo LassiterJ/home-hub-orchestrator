@@ -3,19 +3,21 @@ import { DatePicker } from '@/components/ui/DatePicker'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
 import { Input } from '@/components/ui/Input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
-import { type FieldDef } from '@/stores/formBuilder.store'
+// import { type FieldDef } from '@/stores/formBuilder.store'
 import { type Control, type FieldValues } from 'react-hook-form'
+import { FormDataItem } from '@/features/formbuilder/builder/FormEditor'
 
 /**
  * FieldRenderer
  *
  * Minimal registry-driven field renderer. Maps FieldDef kinds to UI controls using
- * our design system components. Intended for runtime preview only in Option A.
+ * our design system components. Intended for runtime preview only.
+ *
  */
-export function FieldRenderer({ def, control }: { def: FieldDef; control: Control<FieldValues> }) {
+export function FieldRenderer({ def, control }: { def: FormDataItem; control: Control<FieldValues> }) {
    if (!def) return null
-
-   switch (def.kind) {
+   console.log(`Field(${def?.name} def: `, def)
+   switch (def.type) {
       case 'text':
          return (
             <FormField
@@ -93,24 +95,6 @@ export function FieldRenderer({ def, control }: { def: FieldDef; control: Contro
                            date={(field.value as Date | undefined) ?? undefined}
                            setDate={(d) => field.onChange(d)}
                         />
-                     </FormControl>
-                     <FormMessage />
-                  </FormItem>
-               )}
-            />
-         )
-
-      case 'custom':
-         // TODO: Provide pluggable registry for custom components via def.meta
-         return (
-            <FormField
-               control={control}
-               name={def.id}
-               render={({ field }) => (
-                  <FormItem>
-                     <FormLabel>{def.label}</FormLabel>
-                     <FormControl>
-                        <Input placeholder={String(def.meta?.placeholder ?? '')} {...field} />
                      </FormControl>
                      <FormMessage />
                   </FormItem>

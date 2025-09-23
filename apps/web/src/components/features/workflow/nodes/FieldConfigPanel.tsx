@@ -67,17 +67,17 @@ export function FieldConfigPanel({ selectedFieldId, fieldData, onChange }: Field
                <div className="grid grid-cols-2 gap-2">
                   <div>
                      <Label>Min length</Label>
-                     <Input type="number" value={fieldData?.minLength ?? ''}
+                     <Input name="minLength" type="number" value={fieldData?.minLength ?? ''}
                             onChange={(e) => onChange({ minLength: e.target.value ? Number(e.target.value) : undefined })} />
                   </div>
                   <div>
                      <Label>Max length</Label>
-                     <Input type="number" value={fieldData?.maxLength ?? ''}
+                     <Input name="minLength" type="number" value={fieldData?.maxLength ?? ''}
                             onChange={(e) => onChange({ maxLength: e.target.value ? Number(e.target.value) : undefined })} />
                   </div>
                   <div className="col-span-2">
                      <Label>Pattern (regex)</Label>
-                     <Input value={fieldData?.pattern ?? ''}
+                     <Input name="pattern" value={fieldData?.pattern ?? ''}
                             onChange={(e) => onChange({ pattern: e.target.value || undefined })} />
                   </div>
                </div>
@@ -152,10 +152,20 @@ export function FieldConfigPanel({ selectedFieldId, fieldData, onChange }: Field
       )
    }
 
-
    return (
       <div className=" p-2 space-y-3">
          <div className="flex items-center justify-between">
+            <div>
+               <Label>Type</Label>
+               <Select value={type} onValueChange={(v) => onChange({ type: v as FieldConfig['type'] })}>
+                  <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+                  <SelectContent>
+                     {['text', 'textarea', 'number', 'select', 'checkbox', 'radio', 'date', 'file'].map(t => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                     ))}
+                  </SelectContent>
+               </Select>
+            </div>
 
             <div>
                <Label>Name</Label>
@@ -190,18 +200,6 @@ export function FieldConfigPanel({ selectedFieldId, fieldData, onChange }: Field
          <div>
             <Label>Help text</Label>
             <Input value={fieldData.helpText ?? ''} onChange={(e) => onChange({ helpText: e.target.value })} />
-         </div>
-
-         <div>
-            <Label>Type</Label>
-            <Select value={type} onValueChange={(v) => onChange({ type: v as FieldConfig['type'] })}>
-               <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
-               <SelectContent>
-                  {['text', 'textarea', 'number', 'select', 'checkbox', 'radio', 'date', 'file'].map(t => (
-                     <SelectItem key={t} value={t}>{t}</SelectItem>
-                  ))}
-               </SelectContent>
-            </Select>
          </div>
 
          {typeSpecific}
