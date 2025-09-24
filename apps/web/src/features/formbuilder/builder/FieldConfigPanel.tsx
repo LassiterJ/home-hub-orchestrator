@@ -53,7 +53,7 @@ const TYPE_DEFAULT_SCAFFOLD: TypeScaffoldFactory = {
 export type FieldConfigPanelProps<K extends FieldKind = FieldKind> = {
    selectedFieldId: string;
    fieldData: FieldByType<K>;
-   onChange: (patch: FieldPatch<K>) => void;
+   onChange?: (patch: FieldPatch<K>) => void;
    onAddField?: (fieldData: FieldByType<K>) => void;
    onRemoveField: (id: string) => void
 };
@@ -64,12 +64,12 @@ export type FieldConfigPanelProps<K extends FieldKind = FieldKind> = {
  * user submits, ensuring undo/redo history remains intact.
  */
 export function FieldConfigPanel({
-   selectedFieldId,
-   fieldData,
-   onChange,
-   onAddField,
-   onRemoveField,
-}: FieldConfigPanelProps) {
+                                    selectedFieldId,
+                                    fieldData,
+                                    onChange,
+                                    onAddField,
+                                    onRemoveField,
+                                 }: FieldConfigPanelProps) {
    const initialValues = useMemo(() => toFieldConfigFormValues(fieldData), [fieldData])
 
    const form = useForm<FieldConfigFormValues>({
@@ -130,7 +130,7 @@ export function FieldConfigPanel({
       <div className="relative border p-2 space-y-3">
          <Label>{title}</Label>
          <Trash onClick={() => onRemoveField(selectedFieldId)}
-            className="absolute top-4 right-4 cursor-pointer hover:text-red-600" />
+                className="absolute top-4 right-4 cursor-pointer hover:text-red-600" />
 
          <Form {...form}>
             <form className="space-y-3" onSubmit={form.handleSubmit(handleSubmit)}>

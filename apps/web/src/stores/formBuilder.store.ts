@@ -39,7 +39,6 @@ export type FormSchema = {
    config?: Record<string, unknown>;
    meta?: Record<string, unknown>;
 };
-
 // PATCH type: allow partial edits but never the discriminant or id/name
 export type FieldPatch = Partial<Omit<FieldConfig, 'type' | 'id' | 'name'>>;
 
@@ -50,15 +49,15 @@ export type FieldPatch = Partial<Omit<FieldConfig, 'type' | 'id' | 'name'>>;
 
 export type History<T> = { past: T[]; present: T; future: T[] }
 
-export type FormBuilderMode = 'edit' | 'run'
+export type FormBuilderMode = 'edit' | 'preview'
 
 // ── State API updates ──────────────────────────────────────────────────────────
 export type State = {
    schema: History<FormSchema>;
-   mode: 'edit' | 'run';
+   mode: 'edit' | 'preview';
    selectedFieldId?: FieldId;
 
-   setMode: (m: 'edit' | 'run') => void;
+   setMode: (m: 'edit' | 'preview') => void;
    addField: (f: FieldConfig, index?: number) => void;
    updateField: (id: FieldId, patch: FieldPatch) => void; // <- typed patch
    removeField: (id: FieldId) => void;

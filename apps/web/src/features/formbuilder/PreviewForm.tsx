@@ -6,6 +6,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { FieldRenderer } from './FieldRenderer'
 import { FormSchema } from '@/stores/formBuilder.store'
 import { UseFormProps } from 'react-hook-form/dist/types'
+import { cn } from '@/utils'
 
 /**
  * PreviewForm
@@ -20,6 +21,7 @@ interface PreviewFormProps {
    values?: UseFormProps['defaultValues']; //TODO: not sure if this is typed correctly
    onChange?: () => void; // TODO: make stricter Types
    onSubmit?: SubmitHandler<T>;
+   className?: string
    // getFormInstance?: (form) => void
 }
 
@@ -29,7 +31,7 @@ interface PreviewFormProps {
  * Shows Form component using useForm from a passed schema(state with zustland)
  * Defaults should be applied to Form schema before passing in.
  * */
-export function PreviewForm({ schema, defaults, onSubmit }: PreviewFormProps) {
+export function PreviewForm({ schema, defaults, onSubmit, className }: PreviewFormProps) {
    const [formData, setFormData] = useState()
    const handleSubmit = onSubmit || ((data) => {
       setFormData(data)
@@ -38,7 +40,7 @@ export function PreviewForm({ schema, defaults, onSubmit }: PreviewFormProps) {
    const form = useForm<Record<string, unknown>>({ defaultValues: defaults, mode: 'onChange' })
    const formOutput = JSON.stringify(formData, null, 2)
    return (
-      <div className={'preview-container'}>
+      <div className={cn('preview-container', className)}>
          <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                {schema.fieldOrder.map((id) => (
