@@ -1,95 +1,351 @@
-// Utils
-import { FieldConfig } from '@/features/formbuilder/builder/FormBuilderTypes'
-import { Label } from '@/components/ui/Label'
-import { Input } from '@/components/ui/Input'
+import { Plus, Trash2 } from 'lucide-react'
+import { Fragment } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+
 import { Button } from '@/components/ui/Button'
-import { CirclePlus } from 'lucide-react'
-import { useState } from 'react'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/Form'
+import { Input } from '@/components/ui/Input'
+import { Switch } from '@/components/ui/Switch'
+import { FieldConfig } from '@/features/formbuilder/builder/FormBuilderTypes'
+import { FieldConfigFormValues } from './FieldConfigFormSchema'
 
-const toNum = (v: string) => (v === '' ? undefined : Number(v))
-const toCSV = (v: string) => v.split(',').map(s => s.trim()).filter(Boolean)
+const toOptionalNumber = (value: string) => (value === '' ? undefined : Number(value))
+const EMPTY_OPTION = { label: '', value: '', disabled: false }
 
-type CommonProps<T> = {
-   field: T;
-   onPatch: (p: Partial<T>) => void; // never patch discriminant/id/name
-};
+const TextLikePanel: React.FC = () => {
+   const { control } = useFormContext<FieldConfigFormValues>()
 
-type PanelOf<K extends FieldConfig['type']> =
-   React.FC<CommonProps<Extract<FieldConfig, { type: K }>>>;
-
-type TextLike = Extract<FieldConfig, { type: 'text' | 'textarea' }>;
-const TextLikePanel: React.FC<CommonProps<TextLike>> = ({ field, onPatch }) => (
-   <div className="grid grid-cols-2 gap-2">
-      <div>
-         <Label>Min length</Label>
-         <Input type="number" value={field.minLength ?? ''}
-            onChange={e => onPatch({ minLength: toNum(e.target.value) })} />
-      </div>
-      <div>
-         <Label>Max length</Label>
-         <Input type="number" value={field.maxLength ?? ''}
-            onChange={e => onPatch({ maxLength: toNum(e.target.value) })} />
-      </div>
-      <div className="col-span-2">
-         <Label>Pattern (regex)</Label>
-         <Input value={field.pattern ?? ''} onChange={e => onPatch({ pattern: e.target.value || undefined })} />
-      </div>
-   </div>
-)
-
-type NumberField = Extract<FieldConfig, { type: 'number' }>;
-const NumberPanel: React.FC<CommonProps<NumberField>> = ({ field, onPatch }) => (
-   <div className="grid grid-cols-2 gap-2">
-      <div><Label>Min</Label><Input type="number" value={field.min ?? ''}
-         onChange={e => onPatch({ min: toNum(e.target.value) })} /></div>
-      <div><Label>Max</Label><Input type="number" value={field.max ?? ''}
-         onChange={e => onPatch({ max: toNum(e.target.value) })} /></div>
-      <div><Label>Step</Label><Input type="number" value={field.step ?? ''}
-         onChange={e => onPatch({ step: toNum(e.target.value) })} /></div>
-   </div>
-)
-
-type FileField = Extract<FieldConfig, { type: 'file' }>;
-const FilePanel: React.FC<CommonProps<FileField>> = ({ field, onPatch }) => (
-   <div className="grid grid-cols-2 gap-2">
-      <div className="col-span-2">
-         <Label>Accept (comma-separated)</Label>
-         <Input value={(field.accept ?? []).join(',')}
-            onChange={e => onPatch({ accept: e.target.value ? toCSV(e.target.value) : [] })} />
-      </div>
-      <div><Label>Max size (MB)</Label><Input type="number" value={field.maxSizeMB ?? ''}
-         onChange={e => onPatch({ maxSizeMB: toNum(e.target.value) })} /></div>
-      <div><Label>Max files</Label><Input type="number" value={field.maxFiles ?? ''}
-         onChange={e => onPatch({ maxFiles: toNum(e.target.value) })} /></div>
-   </div>
-)
-
-type SelectField = Extract<FieldConfig, { type: 'select' }>;
-type RadioField = Extract<FieldConfig, { type: 'radio' }>;
-const OptionsPanel: React.FC<CommonProps<SelectField | RadioField>> = { field, onPatch }) => {
-   const [options, setOptions] = useState([]);
-   const handleAddOption = () => {
-      const newOption = { value: "", label: "" }
-      setOptions([...options, newOption])
-   }
-   // TODO: Finish this Options panel
    return (
       <div className="grid grid-cols-2 gap-2">
+         <FormField
+            control={control}
+            name="minLength"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Min length</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="maxLength"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Max length</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
          <div className="col-span-2">
-            <Label>Options (JSON)</Label>
-            <div>
-               <Input type={"text"} name={"value"} className={""} />
-            </div>
-            <div className={'flex w-full justify-center p-0'}>
-               <Button variant={'ghost'} className={'self-center flex p-0 rounded-full'} onClick={ }>
-                  <CirclePlus className={'h-6 w-6'} />
-               </Button>
-            </div>
+            <FormField
+               control={control}
+               name="pattern"
+               render={({ field }) => (
+                  <FormItem>
+                     <FormLabel>Pattern (regex)</FormLabel>
+                     <FormControl>
+                        <Input {...field} value={field.value ?? ''} />
+                     </FormControl>
+                     <FormMessage />
+                  </FormItem>
+               )}
+            />
          </div>
       </div>
    )
 }
 
+const NumberPanel: React.FC = () => {
+   const { control } = useFormContext<FieldConfigFormValues>()
+
+   return (
+      <div className="grid grid-cols-2 gap-2">
+         <FormField
+            control={control}
+            name="min"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Min</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="max"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Max</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="step"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Step</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="integer"
+            render={({ field }) => (
+               <FormItem className="flex items-center justify-between">
+                  <FormLabel>Integer only</FormLabel>
+                  <FormControl>
+                     <Switch checked={!!field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="positive"
+            render={({ field }) => (
+               <FormItem className="flex items-center justify-between">
+                  <FormLabel>Positive only</FormLabel>
+                  <FormControl>
+                     <Switch checked={!!field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="negative"
+            render={({ field }) => (
+               <FormItem className="flex items-center justify-between">
+                  <FormLabel>Negative allowed</FormLabel>
+                  <FormControl>
+                     <Switch checked={!!field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+               </FormItem>
+            )}
+         />
+      </div>
+   )
+}
+
+const FilePanel: React.FC = () => {
+   const { control } = useFormContext<FieldConfigFormValues>()
+
+   return (
+      <div className="grid grid-cols-2 gap-2">
+         <div className="col-span-2">
+            <FormField
+               control={control}
+               name="accept"
+               render={({ field }) => (
+                  <FormItem>
+                     <FormLabel>Accept (comma separated)</FormLabel>
+                     <FormControl>
+                        <Input
+                           value={Array.isArray(field.value) ? field.value.join(', ') : ''}
+                           onChange={(event) => field.onChange(
+                              event.target.value
+                                 .split(',')
+                                 .map((token) => token.trim())
+                                 .filter(Boolean),
+                           )}
+                        />
+                     </FormControl>
+                     <FormMessage />
+                  </FormItem>
+               )}
+            />
+         </div>
+         <FormField
+            control={control}
+            name="maxSizeMB"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Max size (MB)</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="maxFiles"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Max files</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="imageMaxWidth"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Image max width</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={control}
+            name="imageMaxHeight"
+            render={({ field }) => (
+               <FormItem>
+                  <FormLabel>Image max height</FormLabel>
+                  <FormControl>
+                     <Input
+                        type="number"
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(toOptionalNumber(event.target.value))}
+                     />
+                  </FormControl>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+      </div>
+   )
+}
+
+const OptionsPanel: React.FC = () => {
+   const { control } = useFormContext<FieldConfigFormValues>()
+   const { fields, append, remove } = useFieldArray({ control, name: 'options' })
+
+   return (
+      <div className="space-y-3">
+         {fields.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No options yet. Add one to get started.</p>
+         ) : (
+            <div className="space-y-4">
+               {fields.map((option, index) => (
+                  <Fragment key={option.id ?? index}>
+                     <div className="grid grid-cols-2 gap-2 rounded border p-2">
+                        <FormField
+                           control={control}
+                           name={`options.${index}.label` as const}
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>Label</FormLabel>
+                                 <FormControl>
+                                    <Input {...field} value={field.value ?? ''} />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={control}
+                           name={`options.${index}.value` as const}
+                           render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel>Value</FormLabel>
+                                 <FormControl>
+                                    <Input {...field} value={field.value ?? ''} />
+                                 </FormControl>
+                                 <FormMessage />
+                              </FormItem>
+                           )}
+                        />
+                        <FormField
+                           control={control}
+                           name={`options.${index}.disabled` as const}
+                           render={({ field }) => (
+                              <FormItem className="col-span-2 flex items-center justify-between">
+                                 <FormLabel>Disabled</FormLabel>
+                                 <FormControl>
+                                    <Switch checked={!!field.value} onCheckedChange={field.onChange} />
+                                 </FormControl>
+                              </FormItem>
+                           )}
+                        />
+                        <Button
+                           type="button"
+                           variant="ghost"
+                           className="col-span-2 justify-end gap-2 text-destructive"
+                           onClick={() => remove(index)}
+                        >
+                           <Trash2 className="h-4 w-4" />
+                           Remove option
+                        </Button>
+                     </div>
+                  </Fragment>
+               ))}
+            </div>
+         )}
+
+         <Button
+            type="button"
+            variant="ghost"
+            className="flex items-center gap-2"
+            onClick={() => append(EMPTY_OPTION)}
+         >
+            <Plus className="h-4 w-4" />
+            Add option
+         </Button>
+      </div>
+   )
+}
+
+type PanelOf<K extends FieldConfig['type']> = React.FC
 
 export const FIELD_PANELS: {
    [K in FieldConfig['type']]?: PanelOf<K>
@@ -98,8 +354,7 @@ export const FIELD_PANELS: {
    textarea: TextLikePanel,
    number: NumberPanel,
    file: FilePanel,
-   select: OptionsPanel as PanelOf<'select'>,
-   radio: OptionsPanel as PanelOf<'radio'>,
-   // date etc. add when needed
+   select: OptionsPanel,
+   radio: OptionsPanel,
 }
 

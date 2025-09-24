@@ -16,13 +16,13 @@ import {
    SidebarRail,
 } from '@/components/ui/Sidebar'
 import { useWorkflowRFStore } from '@/stores/workflowRF.store'
+import { getNewUUID } from '@/utils'
 import { type DragEventData } from '@neodrag/react'
 import { useReactFlow, type XYPosition } from '@xyflow/react'
 import { BarChart3, Brain, ChevronRight, FileText, List, Settings, Table, Text, Upload, Zap } from 'lucide-react'
 import * as React from 'react'
 import { useCallback } from 'react'
 import { buildDragRect, getFlowRect, hasMatchingId, isPointInRect, nextStatusOnDrag } from './utils'
-import { getNewUUID } from '@/utils'
 
 
 // This is contains sample data.
@@ -298,7 +298,7 @@ export function WorkflowSidebar({ ...props }: React.ComponentProps<typeof Sideba
                            <SidebarMenu className={'gap-3'}>
                               {group.items.map((node) => (
                                  <SidebarMenuItem key={`${node.type}-${node.label}`}
-                                                  className={''}>
+                                    className={''}>
                                     <DraggableNode
                                        nodeType={node.type}
                                        onDrop={handleNodeDrop}
