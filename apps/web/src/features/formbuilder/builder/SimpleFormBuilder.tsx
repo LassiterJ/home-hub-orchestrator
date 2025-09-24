@@ -42,7 +42,8 @@ function SimpleInner({ onSchemaChange, className, debug }: SimpleInnerProps) {
    return (
       <div className={cn(className, `flex justify-center`)}>
          {debug ?
-            <pre className="p-2 text-xs bg-muted/40 overflow-auto">{JSON.stringify(schema, null, 2)}</pre> : null}
+            <pre className="p-2 text-xs bg-muted/40 overflow-auto">{JSON.stringify(schema, null, 2)}</pre> : null
+         }
          <div className="p-4 max-w-2xl mx-auto">
             <PreviewForm schema={schema} defaults={defaults} />
          </div>

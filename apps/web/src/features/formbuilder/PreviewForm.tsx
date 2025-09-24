@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/Button'
 import { Form } from '@/components/ui/Form'
 import * as React from 'react'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { FieldRenderer } from './FieldRenderer'
 import { FormSchema } from '@/stores/formBuilder.store'
@@ -29,22 +30,28 @@ interface PreviewFormProps {
  * Defaults should be applied to Form schema before passing in.
  * */
 export function PreviewForm({ schema, defaults, onSubmit }: PreviewFormProps) {
-
-   const handleSubmit = onSubmit || (() => {
-      console.log('No onSubmit passed to PreviewForm component.')
+   const [formData, setFormData] = useState()
+   const handleSubmit = onSubmit || ((data) => {
+      setFormData(data)
    })
-   
+
    const form = useForm<Record<string, unknown>>({ defaultValues: defaults, mode: 'onChange' })
-   console.log('form: ', form)
+   const formOutput = JSON.stringify(formData, null, 2)
    return (
-      <Form {...form}>
-         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {schema.fieldOrder.map((id) => (
-               <FieldRenderer key={id} def={schema.fieldsById[id]} control={form.control} />
-            ))}
-            <Button type="submit" size="sm">Submit</Button>
-         </form>
-      </Form>
+      <div className={'preview-container'}>
+         <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+               {schema.fieldOrder.map((id) => (
+                  <FieldRenderer key={id} def={schema.fieldsById[id]} control={form.control} />
+               ))}
+               <Button type="submit" size="sm">Submit</Button>
+            </form>
+         </Form>
+         <div>
+         </div>
+         <pre className="p-2 text-xs bg-muted/40 overflow-auto">{formOutput}</pre>
+
+      </div>
    )
 }
 
