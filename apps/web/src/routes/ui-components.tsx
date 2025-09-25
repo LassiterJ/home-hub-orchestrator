@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Checkbox } from '../components/ui/Checkbox'
-import { DatePicker } from '../components/ui/DatePicker'
-import { Input } from '../components/ui/Input/Input'
-import { RadioGroup, RadioGroupItem } from '../components/ui/RadioGroup'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/Select'
-import { Switch } from '../components/ui/Switch'
-import { Textarea } from '../components/ui/Textarea'
-import { Combobox } from '../components/ui/Combobox'
+import { Checkbox } from '@/components/ui/Checkbox'
+import { DatePicker } from '@/components/ui/DatePicker'
+import { Input } from '@/components/ui/Input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select'
+import { Switch } from '@/components/ui/Switch'
+import { Textarea } from '@/components/ui/Textarea'
+import { Combobox } from '@/components/ui/Combobox'
 
 export const Route = createFileRoute('/ui-components')({
    component: UIComponents,
